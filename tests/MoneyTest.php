@@ -323,4 +323,48 @@ class MoneyTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @throws UnsupportedStrategyException
+     */
+    public function test__toString(): void
+    {
+        $money = new Money(100, self::RUB);
+        $this->assertEquals(json_encode([
+            'amount' => 100,
+            'currency' => self::RUB,
+            'different_currency_behavior_strategy' => ErrorWhenCurrenciesAreDifferentStrategy::class,
+        ]), (string)$money);
+    }
+
+    /**
+     * @throws UnsupportedStrategyException
+     */
+    public function testJsonSerialize(): void
+    {
+        $money = new Money(100, self::RUB);
+        $this->assertSame('"' . json_encode([
+                'amount' => 100,
+                'currency' => self::RUB,
+                'different_currency_behavior_strategy' => ErrorWhenCurrenciesAreDifferentStrategy::class,
+            ]) . '"', stripslashes(json_encode($money)));
+    }
+
+    /**
+     * @throws UnsupportedStrategyException
+     */
+    public function testFromJSON(): void
+    {
+        Money::fromJSON('{"amount":100, "currency":"RUB"}');
+        $this->assertTrue(true);
+    }
+
+    /**
+     * @throws UnsupportedStrategyException
+     */
+    public function testFromJSONWithBehaviorStrategy(): void
+    {
+        Money::fromJSON('{"amount":100, "currency":"RUB", "different_currency_behavior_strategy":"Chetkov\\\Money\\\Strategy\\\SingleCurrencyConversionStrategy"}');
+        $this->assertTrue(true);
+    }
 }
