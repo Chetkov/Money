@@ -17,7 +17,8 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\Chetkov\\Money\\": "tests/"
-        }
+        },
+        "files": ["constants.php"]
     },
     "require": {},
     "require-dev": {
