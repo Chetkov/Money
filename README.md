@@ -142,3 +142,64 @@ echo json_encode($proportionallyAllocationResult);
 // ]
 ```
 
+По умолчанию при попытке сложить, вычесть или сравнить значения в разных валютах будет выброшено исключение: _Chetkov\Money\Exception\OperationWithDifferentCurrenciesException_.
+
+Если есть необходимость выполнять эти операции для значений в разных валютах, то при инстанциировании объекта _Money_ одним из аргументов конструктора нужно передать _SingleCurrencyConversionStrategy::class_. 
+В следствии чего, перед выполнением выше перечисленных операций будет выполняться приведение второго значения к валюте первого. 
+
+Для корректного конвертирования валют необходимо инстанциировать обменник (Exchanger - реализует шаблон Singleton) и загрузить в него курсы валютных пар.
+Самый примитивный пример, реализовать это в bootstrap файле Вашего приложения. Или-же Вы можете сделать механизм автоматического обновления курсов валют с определенным интервалом (допустим загружая их с сайта ЦБ). Решение за Вами :)
+
+
+###### exchange-rates.config.php
+```php
+return [
+    'USD-RUB' => 66.34,
+    'EUR-RUB' => 72.42,
+    'JPY-RUB' => 0.61,
+];
+```
+
+###### bootstrap.php
+```php
+<?php 
+
+use Chetkov\Money\Exchanger;
+
+// ...
+
+$exchangeRates = require __ROOT__ . '/config/exchange-rates.config.php'
+Exchanger::getInstance($exchangeRates);
+```
+
+```php
+<?php
+
+use Chetkov\Money\Money;
+use Chetkov\Money\Strategy\SingleCurrencyConversionStrategy;
+
+$moneyInUSD = new Money(100, 'USD', SingleCurrencyConversionStrategy::class);
+$moneyInRUB = new Money(100, 'RUB', SingleCurrencyConversionStrategy::class);, 
+
+echo $moneyInRUB->add($moneyInUSD);
+// Result:
+// {
+//     "amount":6734,
+//     "currency":"RUB",
+//     "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
+// }
+
+echo $moneyInUSD->subtract($moneyInRUB);
+// Result:
+// {
+//     "amount":98.49,
+//     "currency":"USD",
+//     "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
+// }
+
+echo $moneyInRUB->lessThan($moneyInUSD); // true
+
+echo $moneyInUSD->moreThan($moneyInRUB); // true
+
+echo $moneyInUSD->equals($moneyInRUB); // false
+```
