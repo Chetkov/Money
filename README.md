@@ -23,7 +23,7 @@ $money2 = new Money(200, 'RUB');
 ```
 
 ###### Add:
-```
+```php
 $additionResult = $money1->add($money2);
 echo $additionResult; 
 // Result: 
