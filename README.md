@@ -20,7 +20,10 @@ use Chetkov\Money\Money;
 
 $money1 = new Money(100, 'RUB');
 $money2 = new Money(200, 'RUB');
+```
 
+###### Add:
+```php
 $additionResult = $money1->add($money2);
 echo $additionResult; 
 // Result: 
@@ -32,7 +35,7 @@ echo $additionResult;
 ```
 
 ###### Subtract:
-```
+```php
 $subtractionResult = $money2->subtract($money1);
 echo $subtractionResult; 
 // Result: 
@@ -44,7 +47,7 @@ echo $subtractionResult;
 ```
 
 ###### Multiply:
-```
+```php
 $multiplicationResult = $money1->multiple(5);
 echo $multiplicationResult; 
 // Result: 
@@ -56,7 +59,7 @@ echo $multiplicationResult;
 ```
 
 ###### AllocateEvenly:
-```
+```php
 $evenlyAllocationResult = $money1->allocateEvenly(4);
 echo json_encode($evenlyAllocationResult);
 // Result: 
@@ -106,7 +109,7 @@ echo json_encode($evenlyAllocationResult);
 ```
 
 ###### AllocateProportionally:
-```
+```php
 $proportionallyAllocationResult = $money1->allocateProportionally([0.18, 0.32, 0.5, 0.3, 1]);
 echo json_encode($proportionallyAllocationResult);
 // Result: 
