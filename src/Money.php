@@ -2,6 +2,7 @@
 
 namespace Chetkov\Money;
 
+use Chetkov\Money\Exception\SerializationException;
 use Chetkov\Money\Strategy\DifferentCurrenciesBehaviorStrategyFactory;
 use Chetkov\Money\Strategy\DifferentCurrenciesBehaviorStrategyInterface;
 use Chetkov\Money\Strategy\ErrorWhenCurrenciesAreDifferentStrategy;
@@ -10,7 +11,7 @@ use Chetkov\Money\Strategy\ErrorWhenCurrenciesAreDifferentStrategy;
  * Class Money
  * @package Chetkov\Money
  */
-class Money
+class Money implements \JsonSerializable
 {
     /** @var float */
     private $amount;
@@ -158,5 +159,45 @@ class Money
     {
         $other = $this->differentCurrenciesBehaviorStrategy->execute($other, $this->getCurrency());
         return $this->amount < $other->getAmount();
+    }
+
+    /**
+     * @return string
+     * @throws SerializationException
+     */
+    public function __toString(): string
+    {
+        $json = json_encode([
+            'amount' => $this->getAmount(),
+            'currency' => $this->getCurrency(),
+            'different_currency_behavior_strategy' => $this->getDifferentCurrencyBehaviorStrategy()
+        ]);
+
+        if (!is_string($json)) {
+            throw new SerializationException(json_last_error_msg());
+        }
+
+        return $json;
+    }
+
+    /**
+     * @return string
+     */
+    public function jsonSerialize(): string
+    {
+        return (string)$this;
+    }
+
+    /**
+     * @param string $json
+     * @return Money
+     * @throws Exception\UnsupportedStrategyException
+     */
+    public static function fromJSON(string $json): self
+    {
+        $data = json_decode($json, true);
+        return isset($data['different_currency_behavior_strategy'])
+            ? new self($data['amount'], $data['currency'], $data['different_currency_behavior_strategy'])
+            : new self($data['amount'], $data['currency']);
     }
 }
