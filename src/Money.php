@@ -2,7 +2,6 @@
 
 namespace Chetkov\Money;
 
-use Chetkov\Money\Exception\SerializationException;
 use Chetkov\Money\Strategy\DifferentCurrenciesBehaviorStrategyFactory;
 use Chetkov\Money\Strategy\DifferentCurrenciesBehaviorStrategyInterface;
 use Chetkov\Money\Strategy\ErrorWhenCurrenciesAreDifferentStrategy;
@@ -163,21 +162,14 @@ class Money implements \JsonSerializable
 
     /**
      * @return string
-     * @throws SerializationException
      */
     public function __toString(): string
     {
-        $json = json_encode([
+        return (string)json_encode([
             'amount' => $this->getAmount(),
             'currency' => $this->getCurrency(),
             'different_currency_behavior_strategy' => $this->getDifferentCurrencyBehaviorStrategy()
         ]);
-
-        if (!is_string($json)) {
-            throw new SerializationException(json_last_error_msg());
-        }
-
-        return $json;
     }
 
     /**
