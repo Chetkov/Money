@@ -20,10 +20,7 @@ use Chetkov\Money\Money;
 
 $money1 = new Money(100, 'RUB');
 $money2 = new Money(200, 'RUB');
-```
 
-###### Add:
-```php
 $additionResult = $money1->add($money2);
 echo $additionResult; 
 // Result: 
