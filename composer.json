@@ -1,0 +1,28 @@
+{
+    "name": "v.chetkov/money",
+    "description": "",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Валерий Четков",
+            "email": "chetkov.valeriy@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Chetkov\\Money\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\Chetkov\\Money\\": "tests/"
+        }
+    },
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^7.5",
+        "phpstan/phpstan": "^0.11.8",
+        "squizlabs/php_codesniffer": "*"
+    }
+}
