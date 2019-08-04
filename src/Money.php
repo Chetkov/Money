@@ -2,9 +2,9 @@
 
 namespace Chetkov\Money;
 
-use Chetkov\Money\Strategy\DifferentCurrenciesBehaviorStrategyFactory;
-use Chetkov\Money\Strategy\DifferentCurrenciesBehaviorStrategyInterface;
-use Chetkov\Money\Strategy\ErrorWhenCurrenciesAreDifferentStrategy;
+use Chetkov\Money\DTO\PackageConfig;
+use Chetkov\Money\Exception\CurrencyConversationStrategyIsNotSetException;
+use Chetkov\Money\Strategy\CurrencyConversationStrategyInterface;
 
 /**
  * Class Money
@@ -18,24 +18,28 @@ class Money implements \JsonSerializable
     /** @var string */
     private $currency;
 
-    /** @var DifferentCurrenciesBehaviorStrategyInterface */
-    private $differentCurrenciesBehaviorStrategy;
+    /** @var CurrencyConversationStrategyInterface|null */
+    private $currencyConversationStrategy;
 
     /**
      * Money constructor.
      * @param float $amount
      * @param string $currency
-     * @param string $differentCurrenciesBehaviorStrategy
-     * @throws Exception\UnsupportedStrategyException
+     * @param bool $useCurrencyConversationStrategy
+     * @throws Exception\RequiredParameterMissedException
      */
     public function __construct(
         float $amount,
         string $currency,
-        string $differentCurrenciesBehaviorStrategy = ErrorWhenCurrenciesAreDifferentStrategy::class
+        bool $useCurrencyConversationStrategy = false
     ) {
         $this->amount = $amount;
         $this->currency = $currency;
-        $this->differentCurrenciesBehaviorStrategy = DifferentCurrenciesBehaviorStrategyFactory::create($differentCurrenciesBehaviorStrategy);
+
+        $config = PackageConfig::getInstance();
+        if ($useCurrencyConversationStrategy || $config->useCurrencyConversationStrategy()) {
+            $this->currencyConversationStrategy = $config->getCurrencyConversationStrategy();
+        }
     }
 
     /**
@@ -55,40 +59,52 @@ class Money implements \JsonSerializable
     }
 
     /**
-     * @return string
+     * @return CurrencyConversationStrategyInterface|null
      */
-    public function getDifferentCurrencyBehaviorStrategy(): string
+    public function getCurrencyConversationStrategy(): ?CurrencyConversationStrategyInterface
     {
-        return get_class($this->differentCurrenciesBehaviorStrategy);
+        return $this->currencyConversationStrategy;
     }
 
+    /**
+     * @param CurrencyConversationStrategyInterface $strategy
+     * @return Money
+     */
+    public function setCurrencyConversationStrategy(CurrencyConversationStrategyInterface $strategy): self
+    {
+        //TODO: Возможно стоит удалить
+        $this->currencyConversationStrategy = $strategy;
+        return $this;
+    }
 
     /**
      * @param Money $other
      * @return Money
-     * @throws Exception\UnsupportedStrategyException
+     * @throws CurrencyConversationStrategyIsNotSetException
+     * @throws Exception\RequiredParameterMissedException
      */
     public function add(self $other): self
     {
-        $other = $this->differentCurrenciesBehaviorStrategy->execute($other, $this->getCurrency());
+        $other = $this->convertToCurrentCurrency($other);
         return new Money($this->amount + $other->getAmount(), $this->currency);
     }
 
     /**
      * @param Money $other
      * @return Money
-     * @throws Exception\UnsupportedStrategyException
+     * @throws CurrencyConversationStrategyIsNotSetException
+     * @throws Exception\RequiredParameterMissedException
      */
     public function subtract(self $other): self
     {
-        $other = $this->differentCurrenciesBehaviorStrategy->execute($other, $this->getCurrency());
+        $other = $this->convertToCurrentCurrency($other);
         return new Money($this->amount - $other->getAmount(), $this->currency);
     }
 
     /**
      * @param float $factor
      * @return Money
-     * @throws Exception\UnsupportedStrategyException
+     * @throws Exception\RequiredParameterMissedException
      */
     public function multiple(float $factor): self
     {
@@ -99,7 +115,7 @@ class Money implements \JsonSerializable
      * @param int $n
      * @param int $precision
      * @return Money[]
-     * @throws Exception\UnsupportedStrategyException
+     * @throws Exception\RequiredParameterMissedException
      */
     public function allocateEvenly(int $n, int $precision = 2): array
     {
@@ -118,7 +134,7 @@ class Money implements \JsonSerializable
      * @param array $ratios
      * @param int $precision
      * @return Money[]
-     * @throws Exception\UnsupportedStrategyException
+     * @throws Exception\RequiredParameterMissedException
      */
     public function allocateProportionally(array $ratios, int $precision = 2): array
     {
@@ -143,20 +159,22 @@ class Money implements \JsonSerializable
     /**
      * @param Money $other
      * @return bool
+     * @throws CurrencyConversationStrategyIsNotSetException
      */
     public function moreThan(self $other): bool
     {
-        $other = $this->differentCurrenciesBehaviorStrategy->execute($other, $this->getCurrency());
+        $other = $this->convertToCurrentCurrency($other);
         return $this->amount > $other->getAmount();
     }
 
     /**
      * @param Money $other
      * @return bool
+     * @throws CurrencyConversationStrategyIsNotSetException
      */
     public function lessThan(self $other): bool
     {
-        $other = $this->differentCurrenciesBehaviorStrategy->execute($other, $this->getCurrency());
+        $other = $this->convertToCurrentCurrency($other);
         return $this->amount < $other->getAmount();
     }
 
@@ -168,7 +186,9 @@ class Money implements \JsonSerializable
         return (string)json_encode([
             'amount' => $this->getAmount(),
             'currency' => $this->getCurrency(),
-            'different_currency_behavior_strategy' => $this->getDifferentCurrencyBehaviorStrategy()
+            'currency_conversation_strategy' => $this->getCurrencyConversationStrategy()
+                ? get_class($this->getCurrencyConversationStrategy())
+                : null,
         ]);
     }
 
@@ -183,13 +203,30 @@ class Money implements \JsonSerializable
     /**
      * @param string $json
      * @return Money
-     * @throws Exception\UnsupportedStrategyException
+     * @throws Exception\RequiredParameterMissedException
      */
     public static function fromJSON(string $json): self
     {
         $data = json_decode($json, true);
-        return isset($data['different_currency_behavior_strategy'])
-            ? new self($data['amount'], $data['currency'], $data['different_currency_behavior_strategy'])
-            : new self($data['amount'], $data['currency']);
+        $useCurrencyConversationStrategy = (bool)($data['currency_conversation_strategy'] ?? null);
+        return new self($data['amount'], $data['currency'], $useCurrencyConversationStrategy);
+    }
+
+    /**
+     * @param Money $other
+     * @return Money
+     * @throws CurrencyConversationStrategyIsNotSetException
+     */
+    private function convertToCurrentCurrency(Money $other): self
+    {
+        if ($this->currency === $other->getCurrency()) {
+            return $other;
+        }
+
+        if (null === $this->currencyConversationStrategy) {
+            throw new CurrencyConversationStrategyIsNotSetException();
+        }
+
+        return $this->currencyConversationStrategy->convert($other, $this);
     }
 }

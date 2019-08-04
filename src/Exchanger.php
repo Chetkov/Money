@@ -8,7 +8,7 @@ use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
  * Class Exchanger
  * @package Chetkov\Money
  */
-class Exchanger
+class Exchanger implements ExchangerInterface
 {
     /** @var Exchanger */
     private static $instance;
@@ -20,7 +20,7 @@ class Exchanger
      * Exchanger constructor.
      * @param float[] $exchangeRates Example: ['USD-RUB' => 66.34]
      */
-    public function __construct(array $exchangeRates)
+    public function __construct(array $exchangeRates = [])
     {
         $this->exchangeRates = $exchangeRates;
     }
@@ -32,8 +32,13 @@ class Exchanger
     public static function getInstance(array $exchangeRates = []): self
     {
         if (null === self::$instance) {
-            self::$instance = new self($exchangeRates);
+            self::$instance = new self();
         }
+
+        foreach ($exchangeRates as $currencyPair => $exchangeRate) {
+            self::$instance->addCurrencyPair($currencyPair, $exchangeRate);
+        }
+
         return self::$instance;
     }
 
@@ -53,7 +58,7 @@ class Exchanger
      * @param string $currency
      * @param int $precision
      * @return Money
-     * @throws Exception\UnsupportedStrategyException
+     * @throws Exception\RequiredParameterMissedException
      * @throws ExchangeRateWasNotFoundException
      */
     public function exchange(Money $money, string $currency, int $precision = 2): Money
@@ -70,6 +75,6 @@ class Exchanger
             default:
                 throw new ExchangeRateWasNotFoundException($currencyPair);
         }
-        return new Money($exchangedAmount, $currency, $money->getDifferentCurrencyBehaviorStrategy());
+        return new Money($exchangedAmount, $currency);
     }
 }
