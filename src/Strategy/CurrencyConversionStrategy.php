@@ -33,9 +33,7 @@ class CurrencyConversionStrategy implements CurrencyConversationStrategyInterfac
     public function convert(Money $other, Money $current): Money
     {
         if ($other->getCurrency() !== $current->getCurrency()) {
-            $exchangedMoney = $this->exchanger->exchange($other, $current->getCurrency());
-            $exchangedMoney->setCurrencyConversationStrategy($current->getCurrencyConversationStrategy());
-            return $exchangedMoney;
+            return $this->exchanger->exchange($other, $current->getCurrency());
         }
         return $other;
     }

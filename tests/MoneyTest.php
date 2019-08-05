@@ -6,8 +6,6 @@ use Chetkov\Money\DTO\PackageConfig;
 use Chetkov\Money\Exception\CurrencyConversationStrategyIsNotSetException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
 use Chetkov\Money\Money;
-use Chetkov\Money\Strategy\CurrencyConversationStrategyInterface;
-use Chetkov\Money\Strategy\CurrencyConversionStrategy;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -53,15 +51,6 @@ class MoneyTest extends TestCase
     {
         $money = new Money(100, self::RUB);
         $this->assertEquals(self::RUB, $money->getCurrency());
-    }
-
-    /**
-     * @throws RequiredParameterMissedException
-     */
-    public function testGetCurrencyConversationStrategy(): void
-    {
-        $money = new Money(100, self::RUB);
-        $this->assertInstanceOf(CurrencyConversationStrategyInterface::class, $money->getCurrencyConversationStrategy());
     }
 
     /**
@@ -344,7 +333,6 @@ class MoneyTest extends TestCase
         $this->assertEquals(json_encode([
             'amount' => 100,
             'currency' => self::RUB,
-            'currency_conversation_strategy' => CurrencyConversionStrategy::class,
         ]), (string)$money);
     }
 
@@ -354,11 +342,7 @@ class MoneyTest extends TestCase
     public function testJsonSerialize(): void
     {
         $money = new Money(100, self::RUB);
-        $this->assertSame('"' . json_encode([
-                'amount' => 100,
-                'currency' => self::RUB,
-                'currency_conversation_strategy' => CurrencyConversionStrategy::class,
-            ]) . '"', stripslashes(json_encode($money)));
+        $this->assertSame('"{\"amount\":100,\"currency\":\"RUB\"}"', json_encode($money));
     }
 
     /**

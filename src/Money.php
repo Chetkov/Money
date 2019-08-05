@@ -59,25 +59,6 @@ class Money implements \JsonSerializable
     }
 
     /**
-     * @return CurrencyConversationStrategyInterface|null
-     */
-    public function getCurrencyConversationStrategy(): ?CurrencyConversationStrategyInterface
-    {
-        return $this->currencyConversationStrategy;
-    }
-
-    /**
-     * @param CurrencyConversationStrategyInterface $strategy
-     * @return Money
-     */
-    public function setCurrencyConversationStrategy(CurrencyConversationStrategyInterface $strategy): self
-    {
-        //TODO: Возможно стоит удалить
-        $this->currencyConversationStrategy = $strategy;
-        return $this;
-    }
-
-    /**
      * @param Money $other
      * @return Money
      * @throws CurrencyConversationStrategyIsNotSetException
@@ -186,9 +167,6 @@ class Money implements \JsonSerializable
         return (string)json_encode([
             'amount' => $this->getAmount(),
             'currency' => $this->getCurrency(),
-            'currency_conversation_strategy' => $this->getCurrencyConversationStrategy()
-                ? get_class($this->getCurrencyConversationStrategy())
-                : null,
         ]);
     }
 
