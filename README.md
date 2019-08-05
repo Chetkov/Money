@@ -149,8 +149,8 @@ $moneyInUSD->equals($moneyInRUB); // false
 
 Или кросс-валютная проверка на равенство/относительное равенство.
 
-$isCrossCurrenciesComparison - флаг кросс-валютного сравнения (bool)
-$allowableDeviationPercent - допустимый процент отклонения (float: 0.0 .. 100.0)
+- $isCrossCurrenciesComparison - флаг кросс-валютного сравнения (bool)
+- $allowableDeviationPercent - допустимый процент отклонения (float: 0.0 .. 100.0)
 ```php
 $moneyInRUB = new Money(200, 'RUB');
 $moneyInUSD = new Money(3.015, 'USD');
