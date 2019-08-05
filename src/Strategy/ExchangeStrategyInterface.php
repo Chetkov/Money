@@ -1,14 +1,15 @@
 <?php
 
-namespace Chetkov\Money;
+namespace Chetkov\Money\Strategy;
 
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
+use Chetkov\Money\Money;
 
 /**
  * Interface ExchangerInterface
- * @package Chetkov\Money
+ * @package Chetkov\Money\Strategy
  */
-interface ExchangerInterface
+interface ExchangeStrategyInterface
 {
     /**
      * @param Money $money

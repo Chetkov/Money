@@ -1,19 +1,19 @@
 <?php
 
-namespace Tests\Chetkov\Money;
+namespace Tests\Chetkov\Money\Strategy;
 
 use Chetkov\Money\DTO\PackageConfig;
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\Exchanger;
 use Chetkov\Money\Money;
+use Chetkov\Money\Strategy\SimpleExchangeStrategy;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class ExchangerTest
+ * Class SimpleExchangeStrategyTest
  * @package Tests\Chetkov\Money
  */
-class ExchangerTest extends TestCase
+class SimpleExchangeStrategyTest extends TestCase
 {
     /**
      * @throws RequiredParameterMissedException
@@ -26,19 +26,28 @@ class ExchangerTest extends TestCase
 
     public function test__construct(): void
     {
-        new Exchanger([]);
+        new SimpleExchangeStrategy([]);
         $this->assertTrue(true);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testGetInstance(): void
     {
-        Exchanger::getInstance();
+        $reflectionClass = new \ReflectionClass(SimpleExchangeStrategy::getInstance());
+        $instanceProperty = $reflectionClass->getProperty('instance');
+        $instanceProperty->setAccessible(true);
+        $instanceProperty->setValue(null);
+        $instanceProperty->setAccessible(false);
+
+        SimpleExchangeStrategy::getInstance(['EUR-TRY' => 6.24]);
         $this->assertTrue(true);
     }
 
     public function testAddCurrencyPair(): void
     {
-        $exchanger = Exchanger::getInstance();
+        $exchanger = SimpleExchangeStrategy::getInstance();
         $exchanger->addCurrencyPair('USD-RUB', 66.34);
         $this->assertTrue(true);
     }
@@ -60,7 +69,7 @@ class ExchangerTest extends TestCase
         array $expectedResult,
         int $precision = 2
     ): void {
-        $exchanger = Exchanger::getInstance();
+        $exchanger = SimpleExchangeStrategy::getInstance();
         [$currencyPair, $exchangeRate] = $exchangeConfig;
         $exchanger->addCurrencyPair($currencyPair, $exchangeRate);
 
@@ -89,7 +98,7 @@ class ExchangerTest extends TestCase
     public function testExchangeNegative(): void
     {
         $money = new Money(100, 'USD');
-        $exchanger = Exchanger::getInstance();
+        $exchanger = SimpleExchangeStrategy::getInstance();
 
         $this->expectException(ExchangeRateWasNotFoundException::class);
         $exchanger->exchange($money, 'LEI');

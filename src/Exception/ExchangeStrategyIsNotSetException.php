@@ -8,7 +8,7 @@ use Throwable;
  * Class CurrencyConversationStrategyIsNotSetException
  * @package Chetkov\Money\Exception
  */
-class CurrencyConversationStrategyIsNotSetException extends MoneyException
+class ExchangeStrategyIsNotSetException extends MoneyException
 {
     /**
      * CurrencyConversationStrategyIsNotSetException constructor.

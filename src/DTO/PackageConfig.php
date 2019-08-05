@@ -3,7 +3,7 @@
 namespace Chetkov\Money\DTO;
 
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\Strategy\CurrencyConversationStrategyInterface;
+use Chetkov\Money\Strategy\ExchangeStrategyInterface;
 
 /**
  * Class PackageConfig
@@ -53,17 +53,17 @@ class PackageConfig
     /**
      * @return bool
      */
-    public function useCurrencyConversationStrategy(): bool
+    public function useExchangeStrategy(): bool
     {
-        return $this->config['use_currency_conversation_strategy'];
+        return $this->config['use_exchange_strategy'];
     }
 
     /**
-     * @return CurrencyConversationStrategyInterface
+     * @return ExchangeStrategyInterface
      */
-    public function getCurrencyConversationStrategy(): CurrencyConversationStrategyInterface
+    public function getExchangeStrategy(): ExchangeStrategyInterface
     {
-        return $this->config['currency_conversation_strategy_factory']();
+        return $this->config['exchange_strategy_factory']();
     }
 
     /**
@@ -73,8 +73,8 @@ class PackageConfig
     private function validate(array $config): void
     {
         $requiredParameters = [
-            'use_currency_conversation_strategy',
-            'currency_conversation_strategy_factory',
+            'use_exchange_strategy',
+            'exchange_strategy_factory',
         ];
 
         foreach ($requiredParameters as $requiredParameter) {

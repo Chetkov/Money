@@ -3,7 +3,8 @@
 namespace Tests\Chetkov\Money;
 
 use Chetkov\Money\DTO\PackageConfig;
-use Chetkov\Money\Exception\CurrencyConversationStrategyIsNotSetException;
+use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
+use Chetkov\Money\Exception\ExchangeStrategyIsNotSetException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
 use Chetkov\Money\Money;
 use PHPUnit\Framework\TestCase;
@@ -58,8 +59,9 @@ class MoneyTest extends TestCase
      * @param Money $one
      * @param Money $two
      * @param array $expectedResult
-     * @throws CurrencyConversationStrategyIsNotSetException
+     * @throws ExchangeStrategyIsNotSetException
      * @throws RequiredParameterMissedException
+     * @throws ExchangeRateWasNotFoundException
      */
     public function testAdd(Money $one, Money $two, array $expectedResult): void
     {
@@ -75,8 +77,9 @@ class MoneyTest extends TestCase
     {
         $this->setUp();
         return [
-            'int' => [new Money(100, self::RUB), new Money(100, self::RUB), [200, self::RUB]],
-            'float' => [new Money(15.72, self::RUB), new Money(14.29, self::RUB), [30.01, self::RUB]],
+            'float: RUB' => [new Money(15.72, self::RUB), new Money(14.29, self::RUB), [30.01, self::RUB]],
+            'float: USD, RUB' => [new Money(100, self::USD), new Money(100, self::RUB), [101.51, self::USD]],
+            'int: RUB, USD' => [new Money(100, self::RUB), new Money(100, self::USD), [6734, self::RUB]],
         ];
     }
 
@@ -85,7 +88,8 @@ class MoneyTest extends TestCase
      * @param Money $one
      * @param Money $two
      * @param array $expectedResult
-     * @throws CurrencyConversationStrategyIsNotSetException
+     * @throws ExchangeRateWasNotFoundException
+     * @throws ExchangeStrategyIsNotSetException
      * @throws RequiredParameterMissedException
      */
     public function testSubtract(Money $one, Money $two, array $expectedResult): void
@@ -104,6 +108,8 @@ class MoneyTest extends TestCase
         return [
             'int' => [new Money(100, self::RUB), new Money(100, self::RUB), [0, self::RUB]],
             'float' => [new Money(15.72, self::RUB), new Money(15.80, self::RUB), [-0.08, self::RUB]],
+            'int: USD, RUB' => [new Money(100, self::USD), new Money(100, self::RUB), [98.49, self::USD]],
+            'int: RUB, USD' => [new Money(100, self::RUB), new Money(100, self::USD), [-6534, self::RUB]],
         ];
     }
 
@@ -201,11 +207,15 @@ class MoneyTest extends TestCase
      * @dataProvider equalsDataProvider
      * @param Money $one
      * @param Money $two
+     * @param bool $isCrossCurrencyComparison
+     * @param float $allowableDeviationPercent
      * @param bool $expectedResult
+     * @throws ExchangeRateWasNotFoundException
+     * @throws ExchangeStrategyIsNotSetException
      */
-    public function testEquals(Money $one, Money $two, bool $expectedResult): void
+    public function testEquals(Money $one, Money $two, bool $isCrossCurrencyComparison, float $allowableDeviationPercent, bool $expectedResult): void
     {
-        $result = $one->equals($two);
+        $result = $one->equals($two, $isCrossCurrencyComparison, $allowableDeviationPercent);
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -216,8 +226,10 @@ class MoneyTest extends TestCase
     public function equalsDataProvider(): array
     {
         return [
-            'equals' => [new Money(100, 'RUB'), new Money(100, 'RUB'), true],
-            'not equals' => [new Money(100, 'RUB'), new Money(200, 'RUB'), false],
+            'equals' => [new Money(100, self::RUB), new Money(100, self::RUB), false, 0, true],
+            'not equals' => [new Money(100, self::RUB), new Money(200, self::RUB), false, 0, false],
+            'equals (cross currency)' => [new Money(100, self::RUB), new Money(1.51, self::USD), true, 0.5, true],
+            'not equals (cross currency)' => [new Money(100, self::RUB), new Money(1, self::USD), true, 0, false],
         ];
     }
 
@@ -226,7 +238,8 @@ class MoneyTest extends TestCase
      * @param Money $one
      * @param Money $two
      * @param bool $oneIsMoreThanTwo
-     * @throws CurrencyConversationStrategyIsNotSetException
+     * @throws ExchangeRateWasNotFoundException
+     * @throws ExchangeStrategyIsNotSetException
      */
     public function testMoreThan(Money $one, Money $two, bool $oneIsMoreThanTwo): void
     {
@@ -250,7 +263,8 @@ class MoneyTest extends TestCase
      * @param Money $one
      * @param Money $two
      * @param bool $oneIsLessThanTwo
-     * @throws CurrencyConversationStrategyIsNotSetException
+     * @throws ExchangeRateWasNotFoundException
+     * @throws ExchangeStrategyIsNotSetException
      */
     public function testLessThan(Money $one, Money $two, bool $oneIsLessThanTwo): void
     {
@@ -288,7 +302,7 @@ class MoneyTest extends TestCase
     {
         $config = require CHETKOV_MONEY_ROOT . '/config/example.config.php';
         $reconfigurePackageConfig = static function (bool $useStrategy) use ($config) {
-            $config['use_currency_conversation_strategy'] = $useStrategy;
+            $config['use_exchange_strategy'] = $useStrategy;
             PackageConfig::getInstance()->reconfigure($config);
         };
 
@@ -298,28 +312,28 @@ class MoneyTest extends TestCase
         $reconfigurePackageConfig(true);
         return [
             'different currencies for method add' => [
-                static function () use ($one, $two, $reconfigurePackageConfig) {
+                static function () use ($one, $two) {
                     $one->add($two);
                 },
-                CurrencyConversationStrategyIsNotSetException::class,
+                ExchangeStrategyIsNotSetException::class,
             ],
             'different currencies for method subtract' => [
-                static function () use ($one, $two, $reconfigurePackageConfig) {
+                static function () use ($one, $two) {
                     $one->subtract($two);
                 },
-                CurrencyConversationStrategyIsNotSetException::class,
+                ExchangeStrategyIsNotSetException::class,
             ],
             'different currencies for method moreThan' => [
-                static function () use ($one, $two, $reconfigurePackageConfig) {
+                static function () use ($one, $two) {
                     $one->moreThan($two);
                 },
-                CurrencyConversationStrategyIsNotSetException::class,
+                ExchangeStrategyIsNotSetException::class,
             ],
             'different currencies for method lessThan' => [
-                static function () use ($one, $two, $reconfigurePackageConfig) {
+                static function () use ($one, $two) {
                     $one->lessThan($two);
                 },
-                CurrencyConversationStrategyIsNotSetException::class,
+                ExchangeStrategyIsNotSetException::class,
             ],
         ];
     }
@@ -351,15 +365,6 @@ class MoneyTest extends TestCase
     public function testFromJSON(): void
     {
         Money::fromJSON('{"amount":100, "currency":"RUB"}');
-        $this->assertTrue(true);
-    }
-
-    /**
-     * @throws RequiredParameterMissedException
-     */
-    public function testFromJSONWithBehaviorStrategy(): void
-    {
-        Money::fromJSON('{"amount":100, "currency":"RUB", "currency_conversation_strategy":"Chetkov\\\Money\\\Strategy\\\SingleCurrencyConversionStrategy"}');
         $this->assertTrue(true);
     }
 }

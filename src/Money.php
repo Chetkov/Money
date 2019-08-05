@@ -3,8 +3,7 @@
 namespace Chetkov\Money;
 
 use Chetkov\Money\DTO\PackageConfig;
-use Chetkov\Money\Exception\CurrencyConversationStrategyIsNotSetException;
-use Chetkov\Money\Strategy\CurrencyConversationStrategyInterface;
+use Chetkov\Money\Strategy\ExchangeStrategyInterface;
 
 /**
  * Class Money
@@ -18,8 +17,8 @@ class Money implements \JsonSerializable
     /** @var string */
     private $currency;
 
-    /** @var CurrencyConversationStrategyInterface|null */
-    private $currencyConversationStrategy;
+    /** @var ExchangeStrategyInterface|null */
+    private $exchangeStrategy;
 
     /**
      * Money constructor.
@@ -37,8 +36,8 @@ class Money implements \JsonSerializable
         $this->currency = $currency;
 
         $config = PackageConfig::getInstance();
-        if ($useCurrencyConversationStrategy || $config->useCurrencyConversationStrategy()) {
-            $this->currencyConversationStrategy = $config->getCurrencyConversationStrategy();
+        if ($useCurrencyConversationStrategy || $config->useExchangeStrategy()) {
+            $this->exchangeStrategy = $config->getExchangeStrategy();
         }
     }
 
@@ -61,7 +60,8 @@ class Money implements \JsonSerializable
     /**
      * @param Money $other
      * @return Money
-     * @throws CurrencyConversationStrategyIsNotSetException
+     * @throws Exception\ExchangeRateWasNotFoundException
+     * @throws Exception\ExchangeStrategyIsNotSetException
      * @throws Exception\RequiredParameterMissedException
      */
     public function add(self $other): self
@@ -73,7 +73,8 @@ class Money implements \JsonSerializable
     /**
      * @param Money $other
      * @return Money
-     * @throws CurrencyConversationStrategyIsNotSetException
+     * @throws Exception\ExchangeRateWasNotFoundException
+     * @throws Exception\ExchangeStrategyIsNotSetException
      * @throws Exception\RequiredParameterMissedException
      */
     public function subtract(self $other): self
@@ -129,10 +130,21 @@ class Money implements \JsonSerializable
 
     /**
      * @param Money $other
+     * @param bool $isCrossCurrencyComparison
+     * @param float $allowableDeviationPercent
      * @return bool
+     * @throws Exception\ExchangeRateWasNotFoundException
+     * @throws Exception\ExchangeStrategyIsNotSetException
      */
-    public function equals(self $other): bool
+    public function equals(self $other, bool $isCrossCurrencyComparison = false, float $allowableDeviationPercent = 0): bool
     {
+        if ($isCrossCurrencyComparison) {
+            $other = $this->convertToCurrentCurrency($other);
+            $deviation = abs($this->getAmount() - $other->getAmount());
+            $deviationPercentInFact = $deviation / $this->getAmount() * 100;
+            return $deviationPercentInFact < $allowableDeviationPercent;
+        }
+
         return $this->amount === $other->getAmount()
             && $this->currency === $other->getCurrency();
     }
@@ -140,7 +152,8 @@ class Money implements \JsonSerializable
     /**
      * @param Money $other
      * @return bool
-     * @throws CurrencyConversationStrategyIsNotSetException
+     * @throws Exception\ExchangeRateWasNotFoundException
+     * @throws Exception\ExchangeStrategyIsNotSetException
      */
     public function moreThan(self $other): bool
     {
@@ -151,7 +164,8 @@ class Money implements \JsonSerializable
     /**
      * @param Money $other
      * @return bool
-     * @throws CurrencyConversationStrategyIsNotSetException
+     * @throws Exception\ExchangeRateWasNotFoundException
+     * @throws Exception\ExchangeStrategyIsNotSetException
      */
     public function lessThan(self $other): bool
     {
@@ -186,14 +200,14 @@ class Money implements \JsonSerializable
     public static function fromJSON(string $json): self
     {
         $data = json_decode($json, true);
-        $useCurrencyConversationStrategy = (bool)($data['currency_conversation_strategy'] ?? null);
-        return new self($data['amount'], $data['currency'], $useCurrencyConversationStrategy);
+        return new self($data['amount'], $data['currency']);
     }
 
     /**
      * @param Money $other
      * @return Money
-     * @throws CurrencyConversationStrategyIsNotSetException
+     * @throws Exception\ExchangeRateWasNotFoundException
+     * @throws Exception\ExchangeStrategyIsNotSetException
      */
     private function convertToCurrentCurrency(Money $other): self
     {
@@ -201,10 +215,10 @@ class Money implements \JsonSerializable
             return $other;
         }
 
-        if (null === $this->currencyConversationStrategy) {
-            throw new CurrencyConversationStrategyIsNotSetException();
+        if (null === $this->exchangeStrategy) {
+            throw new Exception\ExchangeStrategyIsNotSetException();
         }
 
-        return $this->currencyConversationStrategy->convert($other, $this);
+        return $this->exchangeStrategy->exchange($other, $this->getCurrency());
     }
 }
