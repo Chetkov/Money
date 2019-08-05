@@ -5,10 +5,10 @@ namespace Chetkov\Money\Exception;
 use Throwable;
 
 /**
- * Class CurrencyConversationStrategyIsNotSetException
+ * Class OperationWithDifferentCurrenciesException
  * @package Chetkov\Money\Exception
  */
-class ExchangeStrategyIsNotSetException extends MoneyException
+class OperationWithDifferentCurrenciesException extends MoneyException
 {
     /**
      * CurrencyConversationStrategyIsNotSetException constructor.
@@ -17,7 +17,7 @@ class ExchangeStrategyIsNotSetException extends MoneyException
      * @param Throwable|null $previous
      */
     public function __construct(
-        string $message = 'Unable to convert currencies, because CurrencyConversationStrategy is not set!',
+        string $message = 'Unable to convert currencies, because ExchangeStrategy is not set!',
         int $code = 0,
         Throwable $previous = null
     ) {

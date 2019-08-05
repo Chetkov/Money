@@ -4,7 +4,7 @@ namespace Tests\Chetkov\Money;
 
 use Chetkov\Money\DTO\PackageConfig;
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
-use Chetkov\Money\Exception\ExchangeStrategyIsNotSetException;
+use Chetkov\Money\Exception\OperationWithDifferentCurrenciesException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
 use Chetkov\Money\Money;
 use PHPUnit\Framework\TestCase;
@@ -59,7 +59,7 @@ class MoneyTest extends TestCase
      * @param Money $one
      * @param Money $two
      * @param array $expectedResult
-     * @throws ExchangeStrategyIsNotSetException
+     * @throws OperationWithDifferentCurrenciesException
      * @throws RequiredParameterMissedException
      * @throws ExchangeRateWasNotFoundException
      */
@@ -89,7 +89,7 @@ class MoneyTest extends TestCase
      * @param Money $two
      * @param array $expectedResult
      * @throws ExchangeRateWasNotFoundException
-     * @throws ExchangeStrategyIsNotSetException
+     * @throws OperationWithDifferentCurrenciesException
      * @throws RequiredParameterMissedException
      */
     public function testSubtract(Money $one, Money $two, array $expectedResult): void
@@ -211,7 +211,7 @@ class MoneyTest extends TestCase
      * @param float $allowableDeviationPercent
      * @param bool $expectedResult
      * @throws ExchangeRateWasNotFoundException
-     * @throws ExchangeStrategyIsNotSetException
+     * @throws OperationWithDifferentCurrenciesException
      */
     public function testEquals(Money $one, Money $two, bool $isCrossCurrencyComparison, float $allowableDeviationPercent, bool $expectedResult): void
     {
@@ -239,7 +239,7 @@ class MoneyTest extends TestCase
      * @param Money $two
      * @param bool $oneIsMoreThanTwo
      * @throws ExchangeRateWasNotFoundException
-     * @throws ExchangeStrategyIsNotSetException
+     * @throws OperationWithDifferentCurrenciesException
      */
     public function testMoreThan(Money $one, Money $two, bool $oneIsMoreThanTwo): void
     {
@@ -264,7 +264,7 @@ class MoneyTest extends TestCase
      * @param Money $two
      * @param bool $oneIsLessThanTwo
      * @throws ExchangeRateWasNotFoundException
-     * @throws ExchangeStrategyIsNotSetException
+     * @throws OperationWithDifferentCurrenciesException
      */
     public function testLessThan(Money $one, Money $two, bool $oneIsLessThanTwo): void
     {
@@ -315,25 +315,25 @@ class MoneyTest extends TestCase
                 static function () use ($one, $two) {
                     $one->add($two);
                 },
-                ExchangeStrategyIsNotSetException::class,
+                OperationWithDifferentCurrenciesException::class,
             ],
             'different currencies for method subtract' => [
                 static function () use ($one, $two) {
                     $one->subtract($two);
                 },
-                ExchangeStrategyIsNotSetException::class,
+                OperationWithDifferentCurrenciesException::class,
             ],
             'different currencies for method moreThan' => [
                 static function () use ($one, $two) {
                     $one->moreThan($two);
                 },
-                ExchangeStrategyIsNotSetException::class,
+                OperationWithDifferentCurrenciesException::class,
             ],
             'different currencies for method lessThan' => [
                 static function () use ($one, $two) {
                     $one->lessThan($two);
                 },
-                ExchangeStrategyIsNotSetException::class,
+                OperationWithDifferentCurrenciesException::class,
             ],
         ];
     }
