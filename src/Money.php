@@ -95,14 +95,14 @@ class Money implements \JsonSerializable
 
     /**
      * @param int $n
-     * @param int $precision
+     * @param int $roundingPrecision
      * @return Money[]
      * @throws Exception\RequiredParameterMissedException
      */
-    public function allocateEvenly(int $n, int $precision = 2): array
+    public function allocateEvenly(int $n, int $roundingPrecision = 2): array
     {
         $result = [];
-        $part = round($this->amount / $n, $precision);
+        $part = round($this->amount / $n, $roundingPrecision);
         $balance = $this->amount;
         for ($i = 0; $i < $n - 1; $i++) {
             $result[] = new Money($part, $this->currency);
@@ -114,15 +114,15 @@ class Money implements \JsonSerializable
 
     /**
      * @param array $ratios
-     * @param int $precision
+     * @param int $roundingPrecision
      * @return Money[]
      * @throws Exception\RequiredParameterMissedException
      */
-    public function allocateProportionally(array $ratios, int $precision = 2): array
+    public function allocateProportionally(array $ratios, int $roundingPrecision = 2): array
     {
         $result = [];
         foreach ($ratios as $ratio) {
-            $part = round($this->amount * $ratio, $precision);
+            $part = round($this->amount * $ratio, $roundingPrecision);
             $result[] = new Money($part, $this->currency);
         }
         return $result;

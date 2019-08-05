@@ -58,21 +58,21 @@ class SimpleExchangeStrategy implements ExchangeStrategyInterface
     /**
      * @param Money $money
      * @param string $currency
-     * @param int $precision
+     * @param int $roundingPrecision
      * @return Money
      * @throws RequiredParameterMissedException
      * @throws ExchangeRateWasNotFoundException
      */
-    public function exchange(Money $money, string $currency, int $precision = 2): Money
+    public function exchange(Money $money, string $currency, int $roundingPrecision = 2): Money
     {
         $currencyPair = "{$money->getCurrency()}-$currency";
         $reversePair = "$currency-{$money->getCurrency()}";
         switch (true) {
             case isset($this->exchangeRates[$currencyPair]):
-                $exchangedAmount = round($money->getAmount() * $this->exchangeRates[$currencyPair], $precision);
+                $exchangedAmount = round($money->getAmount() * $this->exchangeRates[$currencyPair], $roundingPrecision);
                 break;
             case isset($this->exchangeRates[$reversePair]):
-                $exchangedAmount = round($money->getAmount() / $this->exchangeRates[$reversePair], $precision);
+                $exchangedAmount = round($money->getAmount() / $this->exchangeRates[$reversePair], $roundingPrecision);
                 break;
             default:
                 throw new ExchangeRateWasNotFoundException($currencyPair);

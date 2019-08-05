@@ -58,7 +58,7 @@ class SimpleExchangeStrategyTest extends TestCase
      * @param string $currency
      * @param array $exchangeConfig
      * @param array $expectedResult
-     * @param int $precision
+     * @param int $roundingPrecision
      * @throws ExchangeRateWasNotFoundException
      * @throws RequiredParameterMissedException
      */
@@ -67,13 +67,13 @@ class SimpleExchangeStrategyTest extends TestCase
         string $currency,
         array $exchangeConfig,
         array $expectedResult,
-        int $precision = 2
+        int $roundingPrecision = 2
     ): void {
         $exchanger = SimpleExchangeStrategy::getInstance();
         [$currencyPair, $exchangeRate] = $exchangeConfig;
         $exchanger->addCurrencyPair($currencyPair, $exchangeRate);
 
-        $exchangedMoney = $exchanger->exchange($money, $currency, $precision);
+        $exchangedMoney = $exchanger->exchange($money, $currency, $roundingPrecision);
         $this->assertEquals($expectedResult, [$exchangedMoney->getAmount(), $exchangedMoney->getCurrency()]);
     }
 
