@@ -2,8 +2,9 @@
 
 namespace Tests\Chetkov\Money;
 
+use Chetkov\Money\DTO\PackageConfig;
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
-use Chetkov\Money\Exception\UnsupportedStrategyException;
+use Chetkov\Money\Exception\RequiredParameterMissedException;
 use Chetkov\Money\Exchanger;
 use Chetkov\Money\Money;
 use PHPUnit\Framework\TestCase;
@@ -14,6 +15,15 @@ use PHPUnit\Framework\TestCase;
  */
 class ExchangerTest extends TestCase
 {
+    /**
+     * @throws RequiredParameterMissedException
+     */
+    protected function setUp()
+    {
+        $config = require CHETKOV_MONEY_ROOT . '/config/example.config.php';
+        PackageConfig::getInstance($config);
+    }
+
     public function test__construct(): void
     {
         new Exchanger([]);
@@ -41,7 +51,7 @@ class ExchangerTest extends TestCase
      * @param array $expectedResult
      * @param int $precision
      * @throws ExchangeRateWasNotFoundException
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function testExchange(
         Money $money,
@@ -60,10 +70,11 @@ class ExchangerTest extends TestCase
 
     /**
      * @return array
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function exchangeDataProvider(): array
     {
+        $this->setUp();
         return [
             'USD to RUB' => [new Money(100, 'USD'), 'RUB', ['USD-RUB', 66.34], [6634, 'RUB']],
             'RUB to USD, precision: 2' => [new Money(100, 'RUB'), 'USD', ['USD-RUB', 66.34], [1.51, 'USD'], 2],
@@ -73,7 +84,7 @@ class ExchangerTest extends TestCase
 
     /**
      * @throws ExchangeRateWasNotFoundException
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function testExchangeNegative(): void
     {

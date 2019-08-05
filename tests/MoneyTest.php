@@ -2,11 +2,12 @@
 
 namespace Tests\Chetkov\Money;
 
-use Chetkov\Money\Exception\OperationWithDifferentCurrenciesException;
-use Chetkov\Money\Exception\UnsupportedStrategyException;
+use Chetkov\Money\DTO\PackageConfig;
+use Chetkov\Money\Exception\CurrencyConversationStrategyIsNotSetException;
+use Chetkov\Money\Exception\RequiredParameterMissedException;
 use Chetkov\Money\Money;
-use Chetkov\Money\Strategy\ErrorWhenCurrenciesAreDifferentStrategy;
-use Chetkov\Money\Strategy\SingleCurrencyConversionStrategy;
+use Chetkov\Money\Strategy\CurrencyConversationStrategyInterface;
+use Chetkov\Money\Strategy\CurrencyConversionStrategy;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -19,7 +20,16 @@ class MoneyTest extends TestCase
     private const USD = 'USD';
 
     /**
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
+     */
+    protected function setUp()
+    {
+        $config = require CHETKOV_MONEY_ROOT . '/config/example.config.php';
+        PackageConfig::getInstance($config);
+    }
+
+    /**
+     * @throws RequiredParameterMissedException
      */
     public function test__construct(): void
     {
@@ -28,7 +38,7 @@ class MoneyTest extends TestCase
     }
 
     /**
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function testGetAmount(): void
     {
@@ -37,7 +47,7 @@ class MoneyTest extends TestCase
     }
 
     /**
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function testGetCurrency(): void
     {
@@ -46,25 +56,12 @@ class MoneyTest extends TestCase
     }
 
     /**
-     * @dataProvider getDifferentCurrenciesBehaviorStrategyDataProvider
-     * @param string $strategy
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
-    public function testGetDifferentCurrenciesBehaviorStrategy(string $strategy): void
+    public function testGetCurrencyConversationStrategy(): void
     {
-        $money = new Money(100, self::RUB, $strategy);
-        $this->assertEquals($money->getDifferentCurrencyBehaviorStrategy(), $strategy);
-    }
-
-    /**
-     * @return array
-     */
-    public function getDifferentCurrenciesBehaviorStrategyDataProvider(): array
-    {
-        return [
-            'ErrorWhenCurrenciesAreDifferentStrategy' => [ErrorWhenCurrenciesAreDifferentStrategy::class],
-            'SingleCurrencyConversionStrategy' => [SingleCurrencyConversionStrategy::class],
-        ];
+        $money = new Money(100, self::RUB);
+        $this->assertInstanceOf(CurrencyConversationStrategyInterface::class, $money->getCurrencyConversationStrategy());
     }
 
     /**
@@ -72,7 +69,8 @@ class MoneyTest extends TestCase
      * @param Money $one
      * @param Money $two
      * @param array $expectedResult
-     * @throws UnsupportedStrategyException
+     * @throws CurrencyConversationStrategyIsNotSetException
+     * @throws RequiredParameterMissedException
      */
     public function testAdd(Money $one, Money $two, array $expectedResult): void
     {
@@ -82,10 +80,11 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function addDataProvider(): array
     {
+        $this->setUp();
         return [
             'int' => [new Money(100, self::RUB), new Money(100, self::RUB), [200, self::RUB]],
             'float' => [new Money(15.72, self::RUB), new Money(14.29, self::RUB), [30.01, self::RUB]],
@@ -97,7 +96,8 @@ class MoneyTest extends TestCase
      * @param Money $one
      * @param Money $two
      * @param array $expectedResult
-     * @throws UnsupportedStrategyException
+     * @throws CurrencyConversationStrategyIsNotSetException
+     * @throws RequiredParameterMissedException
      */
     public function testSubtract(Money $one, Money $two, array $expectedResult): void
     {
@@ -107,10 +107,11 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function subtractDataProvider(): array
     {
+        $this->setUp();
         return [
             'int' => [new Money(100, self::RUB), new Money(100, self::RUB), [0, self::RUB]],
             'float' => [new Money(15.72, self::RUB), new Money(15.80, self::RUB), [-0.08, self::RUB]],
@@ -122,7 +123,7 @@ class MoneyTest extends TestCase
      * @param Money $money
      * @param float $factor
      * @param array $expectedResult
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function testMultiple(Money $money, float $factor, array $expectedResult): void
     {
@@ -132,7 +133,7 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function multiplyDataProvider(): array
     {
@@ -147,7 +148,7 @@ class MoneyTest extends TestCase
      * @param Money $money
      * @param int $n
      * @param array $expectedResult
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function testAllocateEvenly(Money $money, int $n, array $expectedResult): void
     {
@@ -163,7 +164,7 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function allocateEvenlyDataProvider(): array
     {
@@ -179,7 +180,7 @@ class MoneyTest extends TestCase
      * @param Money $money
      * @param array $ratios
      * @param array $expectedResult
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function testAllocateProportionally(Money $money, array $ratios, array $expectedResult): void
     {
@@ -195,7 +196,7 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function allocateProportionallyDataProvider(): array
     {
@@ -221,7 +222,7 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function equalsDataProvider(): array
     {
@@ -236,6 +237,7 @@ class MoneyTest extends TestCase
      * @param Money $one
      * @param Money $two
      * @param bool $oneIsMoreThanTwo
+     * @throws CurrencyConversationStrategyIsNotSetException
      */
     public function testMoreThan(Money $one, Money $two, bool $oneIsMoreThanTwo): void
     {
@@ -244,7 +246,7 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function moreThanDataProvider(): array
     {
@@ -259,6 +261,7 @@ class MoneyTest extends TestCase
      * @param Money $one
      * @param Money $two
      * @param bool $oneIsLessThanTwo
+     * @throws CurrencyConversationStrategyIsNotSetException
      */
     public function testLessThan(Money $one, Money $two, bool $oneIsLessThanTwo): void
     {
@@ -267,7 +270,7 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function lessThanDataProvider(): array
     {
@@ -290,42 +293,50 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function negativeCasesDataProvider(): array
     {
+        $config = require CHETKOV_MONEY_ROOT . '/config/example.config.php';
+        $reconfigurePackageConfig = static function (bool $useStrategy) use ($config) {
+            $config['use_currency_conversation_strategy'] = $useStrategy;
+            PackageConfig::getInstance()->reconfigure($config);
+        };
+
+        $reconfigurePackageConfig(false);
         $one = new Money(100, self::RUB);
         $two = new Money(100, self::USD);
+        $reconfigurePackageConfig(true);
         return [
             'different currencies for method add' => [
-                static function () use ($one, $two) {
-                    return $one->add($two);
+                static function () use ($one, $two, $reconfigurePackageConfig) {
+                    $one->add($two);
                 },
-                OperationWithDifferentCurrenciesException::class,
+                CurrencyConversationStrategyIsNotSetException::class,
             ],
             'different currencies for method subtract' => [
-                static function () use ($one, $two) {
-                    return $one->subtract($two);
+                static function () use ($one, $two, $reconfigurePackageConfig) {
+                    $one->subtract($two);
                 },
-                OperationWithDifferentCurrenciesException::class,
+                CurrencyConversationStrategyIsNotSetException::class,
             ],
             'different currencies for method moreThan' => [
-                static function () use ($one, $two) {
-                    return $one->moreThan($two);
+                static function () use ($one, $two, $reconfigurePackageConfig) {
+                    $one->moreThan($two);
                 },
-                OperationWithDifferentCurrenciesException::class,
+                CurrencyConversationStrategyIsNotSetException::class,
             ],
             'different currencies for method lessThan' => [
-                static function () use ($one, $two) {
-                    return $one->lessThan($two);
+                static function () use ($one, $two, $reconfigurePackageConfig) {
+                    $one->lessThan($two);
                 },
-                OperationWithDifferentCurrenciesException::class,
+                CurrencyConversationStrategyIsNotSetException::class,
             ],
         ];
     }
 
     /**
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function test__toString(): void
     {
@@ -333,12 +344,12 @@ class MoneyTest extends TestCase
         $this->assertEquals(json_encode([
             'amount' => 100,
             'currency' => self::RUB,
-            'different_currency_behavior_strategy' => ErrorWhenCurrenciesAreDifferentStrategy::class,
+            'currency_conversation_strategy' => CurrencyConversionStrategy::class,
         ]), (string)$money);
     }
 
     /**
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function testJsonSerialize(): void
     {
@@ -346,12 +357,12 @@ class MoneyTest extends TestCase
         $this->assertSame('"' . json_encode([
                 'amount' => 100,
                 'currency' => self::RUB,
-                'different_currency_behavior_strategy' => ErrorWhenCurrenciesAreDifferentStrategy::class,
+                'currency_conversation_strategy' => CurrencyConversionStrategy::class,
             ]) . '"', stripslashes(json_encode($money)));
     }
 
     /**
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function testFromJSON(): void
     {
@@ -360,11 +371,11 @@ class MoneyTest extends TestCase
     }
 
     /**
-     * @throws UnsupportedStrategyException
+     * @throws RequiredParameterMissedException
      */
     public function testFromJSONWithBehaviorStrategy(): void
     {
-        Money::fromJSON('{"amount":100, "currency":"RUB", "different_currency_behavior_strategy":"Chetkov\\\Money\\\Strategy\\\SingleCurrencyConversionStrategy"}');
+        Money::fromJSON('{"amount":100, "currency":"RUB", "currency_conversation_strategy":"Chetkov\\\Money\\\Strategy\\\SingleCurrencyConversionStrategy"}');
         $this->assertTrue(true);
     }
 }
