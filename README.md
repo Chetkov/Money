@@ -1,5 +1,5 @@
 #### Описание:
-Пакет реализован для упрощения работы с деньгами. 
+Пакет реализован для упрощения работы с денежными значениями. 
 
 Предоставляет возможность:
 - сложения, вычетания, умножения денежных значений;
@@ -7,10 +7,60 @@
 - пропорционального распределения денежного значения в соответствии с заданным соотношением;
 - конвертации валют;
 - сравнения деннежных значений между собой;
-- выполнения всех выше перечисленных пунктов для денежных значений в разных валютах;
+- выполнения всех выше перечисленных операций для денежных значений в разных валютах;
 
 #### Установка:
-`composer require v.chetkov/money`
+```shell script
+composer require v.chetkov/money
+```
+
+#### Конфигурация
+
+_example.config.php_
+```php
+<?php 
+
+use Chetkov\Money\Strategy\ExchangeStrategyInterface;
+use Chetkov\Money\Strategy\SimpleExchangeStrategy;
+
+$exchangeRates = [
+    'USD-RUB' => 66.34,
+    'EUR-RUB' => 72.42,
+    'JPY-RUB' => 0.61,
+];
+
+return [
+    'use_exchange_strategy' => true,
+    'exchange_strategy_factory' => static function () use ($exchangeRates): ExchangeStrategyInterface {
+        static $instance;
+        if (null === $instance) {
+            $instance = SimpleExchangeStrategy::getInstance($exchangeRates);
+        }
+        return $instance;
+    },
+];
+```
+Если параметер `'use_exchange_strategy' => false`, то при выполнении операций с экземплярами _Money_ в разных валютах будет выброшено исключение: _Chetkov\Money\Exception\OperationWithDifferentCurrenciesException_.
+
+Вы можете использовать существующие в пакете стратегии обмена валют: 
+1) _SimpleExchangeStrategy_ - реализует шаблон Singleton.
+Самый примитивный пример: Инстанциировать и выполнить загрузку курсов по валютным парам в bootstrap файле Вашего приложения. 
+Вы можете сделать механизм получения курсов валют со стороннего ресурса (допустим с сайта ЦБ) или автоматического обновления с заданным интервалом. Решение за Вами :)
+
+Или создать собственную стратегию обмена (должна реализовывать _ExchangeStrategyInterface_).
+
+Далее необходимо загрузить описанный выше конфиг в _PackageConfig_, это необходимо для понимания:
+1) включена-ли автоматическая конвертация валют
+2) какой стратегией она будет выполняться
+```php
+<?php 
+
+use Chetkov\Money\DTO\PackageConfig;
+
+$config = require __DIR__ . 'config/example.config.php';
+
+PackageConfig::getInstance($config);
+```
 
 #### Использование
 ```php
@@ -18,190 +68,98 @@
 
 use Chetkov\Money\Money;
 
-$money1 = new Money(100, 'RUB');
-$money2 = new Money(200, 'RUB');
+$moneyInUSD = new Money(100, 'USD');
+$moneyInRUB = new Money(200, 'RUB');
 ```
 
 ###### Add:
 ```php
-$additionResult = $money1->add($money2);
+$additionResult = $moneyInUSD->add($moneyInRUB);
 echo $additionResult; 
-// Result: 
-// {
-//     "amount":300,
-//     "currency":"RUB",
-//     "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
-// }
+// Result: {"amount":103.01,"currency":"USD"}
 ```
 
 ###### Subtract:
 ```php
-$subtractionResult = $money2->subtract($money1);
+$subtractionResult = $moneyInRUB->subtract($moneyInUSD);
 echo $subtractionResult; 
-// Result: 
-// {
-//     "amount":100,
-//     "currency":"RUB",
-//     "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
-// }
+// Result: {"amount":-6434,"currency":"RUB"}
 ```
 
 ###### Multiply:
 ```php
-$multiplicationResult = $money1->multiple(5);
+$multiplicationResult = $moneyInRUB->multiple(5);
 echo $multiplicationResult; 
-// Result: 
-// {
-//     "amount":500,
-//     "currency":"RUB",
-//     "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
-// }
+// Result: {"amount":1000,"currency":"RUB"}
 ```
 
 ###### AllocateEvenly:
 ```php
-$evenlyAllocationResult = $money1->allocateEvenly(4);
+$evenlyAllocationResult = $moneyInUSD->allocateEvenly(4);
 echo json_encode($evenlyAllocationResult);
 // Result: 
 // [
-//     {
-//         "amount":25,
-//         "currency":"RUB",
-//         "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
-//     },
-//     {
-//         "amount":25,
-//         "currency":"RUB",
-//         "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
-//     },
-//     {
-//         "amount":25,
-//         "currency":"RUB",
-//         "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
-//     },
-//     {
-//         "amount":25,
-//         "currency":"RUB",
-//         "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
-//     },
+//     {"amount":25,"currency":"USD"},
+//     {"amount":25,"currency":"USD"},
+//     {"amount":25,"currency":"USD"},
+//     {"amount":25,"currency":"USD"}
 // ]
+```
 
-$evenlyAllocationResult = $money1->allocateEvenly(3, 4);
+Вы можете передать точность округления (опционально):
+```php
+$evenlyAllocationResult = $moneyInUSD->allocateEvenly(3, 4);
 echo json_encode($evenlyAllocationResult);
 // Result: 
 // [
-//     {
-//         "amount":33.3333,
-//         "currency":"RUB",
-//         "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
-//     },
-//     {
-//         "amount":33.3333,
-//         "currency":"RUB",
-//         "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
-//     },
-//     {
-//         "amount":33.3334,
-//         "currency":"RUB",
-//         "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
-//     },
+//     {"amount":33.3333,"currency":"USD"},
+//     {"amount":33.3333,"currency":"USD"},
+//     {"amount":33.3334,"currency":"USD"}
 // ]
 ```
 
 ###### AllocateProportionally:
 ```php
-$proportionallyAllocationResult = $money1->allocateProportionally([0.18, 0.32, 0.5, 0.3, 1]);
+$proportionallyAllocationResult = $moneyInUSD->allocateProportionally([0.18, 0.32, 0.5, 0.3, 1]);
 echo json_encode($proportionallyAllocationResult);
 // Result: 
 // [
-//     {
-//         "amount":18,
-//         "currency":"RUB",
-//         "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
-//     },
-//     {
-//         "amount":32,
-//         "currency":"RUB",
-//         "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
-//     },
-//     {
-//         "amount":50,
-//         "currency":"RUB",
-//         "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
-//     },
-//     {
-//         "amount":30,
-//         "currency":"RUB",
-//         "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
-//     },
-//     {
-//         "amount":100,
-//         "currency":"RUB",
-//         "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
-//     },
+//     {"amount":18,"currency":"USD"},
+//     {"amount":32,"currency":"USD"},
+//     {"amount":50,"currency":"USD"},
+//     {"amount":30,"currency":"USD"},
+//     {"amount":100,"currency":"USD"}
 // ]
 ```
 
-По умолчанию при попытке сложить, вычесть или сравнить значения в разных валютах будет выброшено исключение: _Chetkov\Money\Exception\OperationWithDifferentCurrenciesException_.
-
-Если есть необходимость выполнять эти операции для значений в разных валютах, то при инстанциировании объекта _Money_ одним из аргументов конструктора нужно передать _SingleCurrencyConversionStrategy::class_. 
-В следствии чего, перед выполнением выше перечисленных операций будет выполняться приведение второго значения к валюте первого. 
-
-Для корректного конвертирования валют необходимо инстанциировать обменник (Exchanger - реализует шаблон Singleton) и загрузить в него курсы валютных пар.
-Самый примитивный пример, реализовать это в bootstrap файле Вашего приложения. Или-же Вы можете сделать механизм автоматического обновления курсов валют с определенным интервалом (допустим загружая их с сайта ЦБ). Решение за Вами :)
-
-
-###### exchange-rates.config.php
+###### LessThan
 ```php
-return [
-    'USD-RUB' => 66.34,
-    'EUR-RUB' => 72.42,
-    'JPY-RUB' => 0.61,
-];
+$moneyInRUB->lessThan($moneyInUSD); // true
 ```
 
-###### bootstrap.php
+###### MoreThan
 ```php
-<?php 
-
-use Chetkov\Money\Exchanger;
-
-// ...
-
-$exchangeRates = require __ROOT__ . '/config/exchange-rates.config.php'
-Exchanger::getInstance($exchangeRates);
+$moneyInUSD->moreThan($moneyInRUB); // true
 ```
 
+###### Equals
 ```php
-<?php
+$moneyInUSD->equals($moneyInRUB); // false
+```
 
-use Chetkov\Money\Money;
-use Chetkov\Money\Strategy\SingleCurrencyConversionStrategy;
+Или кросс-валютная проверка на равенство/относительное равенство.
 
-$moneyInUSD = new Money(100, 'USD', SingleCurrencyConversionStrategy::class);
-$moneyInRUB = new Money(100, 'RUB', SingleCurrencyConversionStrategy::class);, 
+$isCrossCurrenciesComparison - флаг кросс-валютного сравнения (bool)
+$allowableDeviationPercent - допустимый процент отклонения (float: 0.0 .. 100.0)
+```php
+$moneyInRUB = new Money(200, 'RUB');
+$moneyInUSD = new Money(3.015, 'USD');
 
-echo $moneyInRUB->add($moneyInUSD);
-// Result:
-// {
-//     "amount":6734,
-//     "currency":"RUB",
-//     "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
-// }
+$isCrossCurrenciesComparison = true;
+$moneyInRUB->equals($moneyInUSD, $isCrossCurrenciesComparison); // false
 
-echo $moneyInUSD->subtract($moneyInRUB);
-// Result:
-// {
-//     "amount":98.49,
-//     "currency":"USD",
-//     "different_currency_behavior_strategy":"Chetkov\\Money\\Strategy\\ErrorWhenCurrenciesAreDifferentStrategy"
-// }
-
-echo $moneyInRUB->lessThan($moneyInUSD); // true
-
-echo $moneyInUSD->moreThan($moneyInRUB); // true
-
-echo $moneyInUSD->equals($moneyInRUB); // false
+$allowableDeviationPercent = 0.5;
+$moneyInRUB->equals($moneyInUSD, $isCrossCurrenciesComparison, $allowableDeviationPercent); // true
 ```
 
 #### PS:
