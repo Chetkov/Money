@@ -1,6 +1,6 @@
 {
     "name": "v.chetkov/money",
-    "description": "",
+    "description": "Библиотека для упрощения работы с денежными значениями",
     "type": "library",
     "license": "MIT",
     "authors": [
