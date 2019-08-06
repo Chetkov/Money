@@ -1,19 +1,19 @@
 <?php
 
-namespace Tests\Chetkov\Money\DTO;
+namespace Tests\Chetkov\Money;
 
-use Chetkov\Money\DTO\PackageConfig;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\Strategy\ExchangeStrategyInterface;
+use Chetkov\Money\Exchange\ExchangerInterface;
+use Chetkov\Money\LibConfig;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class PackageConfigTest
- * @package Tests\Chetkov\Money\DTO
+ * Class LibConfigTest
+ * @package Tests\Chetkov\Money
  */
-class PackageConfigTest extends TestCase
+class LibConfigTest extends TestCase
 {
-    /** @var PackageConfig */
+    /** @var LibConfig */
     private $config;
 
     /**
@@ -22,19 +22,19 @@ class PackageConfigTest extends TestCase
      */
     protected function setUp()
     {
-        $reflectionClass = new \ReflectionClass(PackageConfig::getInstance());
+        $reflectionClass = new \ReflectionClass(LibConfig::getInstance());
         $instanceProperty = $reflectionClass->getProperty('instance');
         $instanceProperty->setAccessible(true);
         $instanceProperty->setValue(null);
         $instanceProperty->setAccessible(false);
 
         $config = require CHETKOV_MONEY_ROOT . '/config/example.config.php';
-        $this->config = PackageConfig::getInstance($config);
+        $this->config = LibConfig::getInstance($config);
     }
 
     public function testGetInstance(): void
     {
-        $this->assertInstanceOf(PackageConfig::class, $this->config);
+        $this->assertInstanceOf(LibConfig::class, $this->config);
     }
 
     /**
@@ -43,9 +43,9 @@ class PackageConfigTest extends TestCase
     public function testReconfigure(): void
     {
         $this->config->reconfigure([
-            'use_exchange_strategy' => true,
-            'exchange_strategy_factory' => static function () {
-                return $this->createMock(ExchangeStrategyInterface::class);
+            'use_currency_conversation' => true,
+            'exchanger_factory' => static function () {
+                return $this->createMock(ExchangerInterface::class);
             },
         ]);
         $this->assertTrue(true);
@@ -62,12 +62,12 @@ class PackageConfigTest extends TestCase
 
     public function testGetExchangeStrategy(): void
     {
-        $this->config->getExchangeStrategy();
+        $this->config->getExchanger();
         $this->assertTrue(true);
     }
 
     public function testUseExchangeStrategy(): void
     {
-        $this->assertEquals(true, $this->config->useExchangeStrategy());
+        $this->assertEquals(true, $this->config->useCurrencyConversation());
     }
 }

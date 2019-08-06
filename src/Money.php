@@ -2,8 +2,7 @@
 
 namespace Chetkov\Money;
 
-use Chetkov\Money\DTO\PackageConfig;
-use Chetkov\Money\Strategy\ExchangeStrategyInterface;
+use Chetkov\Money\Exchange\ExchangerInterface;
 
 /**
  * Class Money
@@ -17,8 +16,8 @@ class Money implements \JsonSerializable
     /** @var string */
     private $currency;
 
-    /** @var ExchangeStrategyInterface|null */
-    private $exchangeStrategy;
+    /** @var ExchangerInterface|null */
+    private $exchanger;
 
     /**
      * Money constructor.
@@ -30,14 +29,14 @@ class Money implements \JsonSerializable
     public function __construct(
         float $amount,
         string $currency,
-        bool $useCurrencyConversationStrategy = false
+        bool $useCurrencyConversationStrategy = false //TODO: нужен-ли? или опираться только на конфиг?
     ) {
         $this->amount = $amount;
         $this->currency = $currency;
 
-        $config = PackageConfig::getInstance();
-        if ($useCurrencyConversationStrategy || $config->useExchangeStrategy()) {
-            $this->exchangeStrategy = $config->getExchangeStrategy();
+        $config = LibConfig::getInstance();
+        if ($useCurrencyConversationStrategy || $config->useCurrencyConversation()) {
+            $this->exchanger = $config->getExchanger();
         }
     }
 
@@ -215,10 +214,10 @@ class Money implements \JsonSerializable
             return $other;
         }
 
-        if (null === $this->exchangeStrategy) {
+        if (null === $this->exchanger) {
             throw new Exception\OperationWithDifferentCurrenciesException();
         }
 
-        return $this->exchangeStrategy->exchange($other, $this->getCurrency());
+        return $this->exchanger->exchange($other, $this->getCurrency());
     }
 }

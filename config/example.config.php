@@ -1,7 +1,8 @@
 <?php
 
-use Chetkov\Money\Strategy\ExchangeStrategyInterface;
-use Chetkov\Money\Strategy\SimpleExchangeStrategy;
+use Chetkov\Money\Exchange\Exchanger;
+use Chetkov\Money\Exchange\ExchangerInterface;
+use Chetkov\Money\Exchange\RatesLoading\SimpleExchangeRatesLoader;
 
 $exchangeRates = [
     'USD-RUB' => 66.34,
@@ -10,11 +11,12 @@ $exchangeRates = [
 ];
 
 return [
-    'use_exchange_strategy' => true,
-    'exchange_strategy_factory' => static function () use ($exchangeRates): ExchangeStrategyInterface {
+    'use_currency_conversation' => true,
+    'exchanger_factory' => static function () use ($exchangeRates): ExchangerInterface {
         static $instance;
         if (null === $instance) {
-            $instance = SimpleExchangeStrategy::getInstance($exchangeRates);
+            $ratesLoader = SimpleExchangeRatesLoader::getInstance($exchangeRates);
+            $instance = new Exchanger($ratesLoader);
         }
         return $instance;
     },

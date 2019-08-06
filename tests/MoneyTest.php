@@ -2,10 +2,11 @@
 
 namespace Tests\Chetkov\Money;
 
-use Chetkov\Money\DTO\PackageConfig;
+use Chetkov\Money\CurrencyEnum;
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
 use Chetkov\Money\Exception\OperationWithDifferentCurrenciesException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
+use Chetkov\Money\LibConfig;
 use Chetkov\Money\Money;
 use PHPUnit\Framework\TestCase;
 
@@ -15,8 +16,8 @@ use PHPUnit\Framework\TestCase;
  */
 class MoneyTest extends TestCase
 {
-    private const RUB = 'RUB';
-    private const USD = 'USD';
+    private const RUB = CurrencyEnum::RUB;
+    private const USD = CurrencyEnum::USD;
 
     /**
      * @throws RequiredParameterMissedException
@@ -24,16 +25,7 @@ class MoneyTest extends TestCase
     protected function setUp()
     {
         $config = require CHETKOV_MONEY_ROOT . '/config/example.config.php';
-        PackageConfig::getInstance($config);
-    }
-
-    /**
-     * @throws RequiredParameterMissedException
-     */
-    public function test__construct(): void
-    {
-        new Money(100, self::RUB);
-        $this->assertTrue(true);
+        LibConfig::getInstance($config);
     }
 
     /**
@@ -301,9 +293,9 @@ class MoneyTest extends TestCase
     public function negativeCasesDataProvider(): array
     {
         $config = require CHETKOV_MONEY_ROOT . '/config/example.config.php';
-        $reconfigurePackageConfig = static function (bool $useStrategy) use ($config) {
-            $config['use_exchange_strategy'] = $useStrategy;
-            PackageConfig::getInstance()->reconfigure($config);
+        $reconfigurePackageConfig = static function (bool $useCurrencyConversation) use ($config) {
+            $config['use_currency_conversation'] = $useCurrencyConversation;
+            LibConfig::getInstance()->reconfigure($config);
         };
 
         $reconfigurePackageConfig(false);

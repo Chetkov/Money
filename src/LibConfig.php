@@ -1,15 +1,15 @@
 <?php
 
-namespace Chetkov\Money\DTO;
+namespace Chetkov\Money;
 
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\Strategy\ExchangeStrategyInterface;
+use Chetkov\Money\Exchange\ExchangerInterface;
 
 /**
- * Class PackageConfig
- * @package Chetkov\Money\DTO
+ * Class LibConfig
+ * @package Chetkov\Money
  */
-class PackageConfig
+class LibConfig
 {
     /** @var self */
     private static $instance;
@@ -18,7 +18,7 @@ class PackageConfig
     private $config;
 
     /**
-     * PackageConfig constructor.
+     * LibConfig constructor.
      * @param array $config
      * @throws RequiredParameterMissedException
      */
@@ -29,7 +29,7 @@ class PackageConfig
 
     /**
      * @param array $config
-     * @return PackageConfig
+     * @return LibConfig
      * @throws RequiredParameterMissedException
      */
     public static function getInstance(array $config = []): self
@@ -53,17 +53,17 @@ class PackageConfig
     /**
      * @return bool
      */
-    public function useExchangeStrategy(): bool
+    public function useCurrencyConversation(): bool
     {
-        return $this->config['use_exchange_strategy'];
+        return $this->config['use_currency_conversation'];
     }
 
     /**
-     * @return ExchangeStrategyInterface
+     * @return ExchangerInterface
      */
-    public function getExchangeStrategy(): ExchangeStrategyInterface
+    public function getExchanger(): ExchangerInterface
     {
-        return $this->config['exchange_strategy_factory']();
+        return $this->config['exchanger_factory']();
     }
 
     /**
@@ -73,8 +73,8 @@ class PackageConfig
     private function validate(array $config): void
     {
         $requiredParameters = [
-            'use_exchange_strategy',
-            'exchange_strategy_factory',
+            'use_currency_conversation',
+            'exchanger_factory',
         ];
 
         foreach ($requiredParameters as $requiredParameter) {
