@@ -28,21 +28,15 @@ class MoneyTest extends TestCase
         LibConfig::getInstance($config);
     }
 
-    /**
-     * @throws RequiredParameterMissedException
-     */
     public function testGetAmount(): void
     {
-        $money = new Money(100, self::RUB);
+        $money = Money::RUB(100);
         $this->assertEquals(100, $money->getAmount());
     }
 
-    /**
-     * @throws RequiredParameterMissedException
-     */
     public function testGetCurrency(): void
     {
-        $money = new Money(100, self::RUB);
+        $money = Money::RUB(100);
         $this->assertEquals(self::RUB, $money->getCurrency());
     }
 
@@ -69,9 +63,9 @@ class MoneyTest extends TestCase
     {
         $this->setUp();
         return [
-            'float: RUB' => [new Money(15.72, self::RUB), new Money(14.29, self::RUB), [30.01, self::RUB]],
-            'float: USD, RUB' => [new Money(100, self::USD), new Money(100, self::RUB), [101.51, self::USD]],
-            'int: RUB, USD' => [new Money(100, self::RUB), new Money(100, self::USD), [6734, self::RUB]],
+            'float: RUB' => [Money::RUB(15.72), Money::RUB(14.29), [30.01, self::RUB]],
+            'float: USD, RUB' => [Money::USD(100), Money::RUB(100), [101.51, self::USD]],
+            'int: RUB, USD' => [Money::RUB(100), Money::USD(100), [6734, self::RUB]],
         ];
     }
 
@@ -98,10 +92,10 @@ class MoneyTest extends TestCase
     {
         $this->setUp();
         return [
-            'int' => [new Money(100, self::RUB), new Money(100, self::RUB), [0, self::RUB]],
-            'float' => [new Money(15.72, self::RUB), new Money(15.80, self::RUB), [-0.08, self::RUB]],
-            'int: USD, RUB' => [new Money(100, self::USD), new Money(100, self::RUB), [98.49, self::USD]],
-            'int: RUB, USD' => [new Money(100, self::RUB), new Money(100, self::USD), [-6534, self::RUB]],
+            'int' => [Money::RUB(100), Money::RUB(100), [0, self::RUB]],
+            'float' => [Money::RUB(15.72), Money::RUB(15.80), [-0.08, self::RUB]],
+            'int: USD, RUB' => [Money::USD(100), Money::RUB(100), [98.49, self::USD]],
+            'int: RUB, USD' => [Money::RUB(100), Money::USD(100), [-6534, self::RUB]],
         ];
     }
 
@@ -120,13 +114,12 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws RequiredParameterMissedException
      */
     public function multiplyDataProvider(): array
     {
         return [
-            'int' => [new Money(100, self::RUB), 100, [10000, self::RUB]],
-            'float' => [new Money(25, self::RUB), 1.5, [37.5, self::RUB]],
+            'int' => [Money::RUB(100), 100, [10000, self::RUB]],
+            'float' => [Money::RUB(25), 1.5, [37.5, self::RUB]],
         ];
     }
 
@@ -151,14 +144,13 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws RequiredParameterMissedException
      */
     public function allocateEvenlyDataProvider(): array
     {
         return [
-            'int' => [new Money(100, self::RUB), 4, [[25, self::RUB], [25, self::RUB], [25, self::RUB], [25, self::RUB]]],
-            'float' => [new Money(5, self::RUB), 2, [[2.5, self::RUB], [2.5, self::RUB]]],
-            'float, not in half' => [new Money(100, self::RUB), 3, [[33.33, self::RUB], [33.33, self::RUB], [33.34, self::RUB]]],
+            'int' => [Money::RUB(100), 4, [[25, self::RUB], [25, self::RUB], [25, self::RUB], [25, self::RUB]]],
+            'float' => [Money::RUB(5), 2, [[2.5, self::RUB], [2.5, self::RUB]]],
+            'float, not in half' => [Money::RUB(100), 3, [[33.33, self::RUB], [33.33, self::RUB], [33.34, self::RUB]]],
         ];
     }
 
@@ -183,15 +175,14 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws RequiredParameterMissedException
      */
     public function allocateProportionallyDataProvider(): array
     {
         return [
-            'int' => [new Money(100, self::RUB), [0.4, 0.6], [[40, self::RUB], [60, self::RUB]]],
-            'float' => [new Money(5, self::RUB), [0.5, 0.5], [[2.5, self::RUB], [2.5, self::RUB]]],
-            'float 1' => [new Money(101, self::RUB), [0.5, 0.3, 0.2, 0.5], [[50.5, self::RUB], [30.3, self::RUB], [20.2, self::RUB], [50.5, self::RUB]]],
-            'float 2' => [new Money(33, self::RUB), [0.381, 0.476, 0.143], [[12.57, self::RUB], [15.71, self::RUB], [4.72, self::RUB]]],
+            'int' => [Money::RUB(100), [0.4, 0.6], [[40, self::RUB], [60, self::RUB]]],
+            'float' => [Money::RUB(5), [0.5, 0.5], [[2.5, self::RUB], [2.5, self::RUB]]],
+            'float 1' => [Money::RUB(101), [0.5, 0.3, 0.2, 0.5], [[50.5, self::RUB], [30.3, self::RUB], [20.2, self::RUB], [50.5, self::RUB]]],
+            'float 2' => [Money::RUB(33), [0.381, 0.476, 0.143], [[12.57, self::RUB], [15.71, self::RUB], [4.72, self::RUB]]],
         ];
     }
 
@@ -213,15 +204,14 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws RequiredParameterMissedException
      */
     public function equalsDataProvider(): array
     {
         return [
-            'equals' => [new Money(100, self::RUB), new Money(100, self::RUB), false, 0, true],
-            'not equals' => [new Money(100, self::RUB), new Money(200, self::RUB), false, 0, false],
-            'equals (cross currency)' => [new Money(100, self::RUB), new Money(1.51, self::USD), true, 0.5, true],
-            'not equals (cross currency)' => [new Money(100, self::RUB), new Money(1, self::USD), true, 0, false],
+            'equals' => [Money::RUB(100), Money::RUB(100), false, 0, true],
+            'not equals' => [Money::RUB(100), Money::RUB(200), false, 0, false],
+            'equals (cross currency)' => [Money::RUB(100), Money::USD(1.51), true, 0.5, true],
+            'not equals (cross currency)' => [Money::RUB(100), Money::USD(1), true, 0, false],
         ];
     }
 
@@ -240,13 +230,12 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws RequiredParameterMissedException
      */
     public function moreThanDataProvider(): array
     {
         return [
-            'true' => [new Money(10, self::RUB), new Money(5, self::RUB), true],
-            'false' => [new Money(5, self::RUB), new Money(10, self::RUB), false],
+            'true' => [Money::RUB(10), Money::RUB(5), true],
+            'false' => [Money::RUB(5), Money::RUB(10), false],
         ];
     }
 
@@ -265,13 +254,12 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws RequiredParameterMissedException
      */
     public function lessThanDataProvider(): array
     {
         return [
-            'true' => [new Money(10, self::RUB), new Money(15, self::RUB), true],
-            'false' => [new Money(15, self::RUB), new Money(10, self::RUB), false],
+            'true' => [Money::RUB(10), Money::RUB(15), true],
+            'false' => [Money::RUB(15), Money::RUB(10), false],
         ];
     }
 
@@ -288,7 +276,6 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws RequiredParameterMissedException
      */
     public function negativeCasesDataProvider(): array
     {
@@ -299,8 +286,8 @@ class MoneyTest extends TestCase
         };
 
         $reconfigurePackageConfig(false);
-        $one = new Money(100, self::RUB);
-        $two = new Money(100, self::USD);
+        $one = Money::RUB(100);
+        $two = Money::USD(100);
         $reconfigurePackageConfig(true);
         return [
             'different currencies for method add' => [
@@ -330,24 +317,18 @@ class MoneyTest extends TestCase
         ];
     }
 
-    /**
-     * @throws RequiredParameterMissedException
-     */
     public function test__toString(): void
     {
-        $money = new Money(100, self::RUB);
+        $money = Money::RUB(100);
         $this->assertEquals(json_encode([
             'amount' => 100,
             'currency' => self::RUB,
         ]), (string)$money);
     }
 
-    /**
-     * @throws RequiredParameterMissedException
-     */
     public function testJsonSerialize(): void
     {
-        $money = new Money(100, self::RUB);
+        $money = Money::RUB(100);
         $this->assertSame('"{\"amount\":100,\"currency\":\"RUB\"}"', json_encode($money));
     }
 

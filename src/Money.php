@@ -7,6 +7,41 @@ use Chetkov\Money\Exchange\ExchangerInterface;
 /**
  * Class Money
  * @package Chetkov\Money
+ * @method static Money RUB(float $amount = 0.0)
+ * @method static Money AUD(float $amount = 0.0)
+ * @method static Money AZN(float $amount = 0.0)
+ * @method static Money GBP(float $amount = 0.0)
+ * @method static Money AMD(float $amount = 0.0)
+ * @method static Money BYN(float $amount = 0.0)
+ * @method static Money BGN(float $amount = 0.0)
+ * @method static Money BRL(float $amount = 0.0)
+ * @method static Money HUF(float $amount = 0.0)
+ * @method static Money HKD(float $amount = 0.0)
+ * @method static Money DKK(float $amount = 0.0)
+ * @method static Money USD(float $amount = 0.0)
+ * @method static Money EUR(float $amount = 0.0)
+ * @method static Money INR(float $amount = 0.0)
+ * @method static Money KZT(float $amount = 0.0)
+ * @method static Money CAD(float $amount = 0.0)
+ * @method static Money KGS(float $amount = 0.0)
+ * @method static Money CNY(float $amount = 0.0)
+ * @method static Money MDL(float $amount = 0.0)
+ * @method static Money NOK(float $amount = 0.0)
+ * @method static Money PLN(float $amount = 0.0)
+ * @method static Money RON(float $amount = 0.0)
+ * @method static Money XDR(float $amount = 0.0)
+ * @method static Money SGD(float $amount = 0.0)
+ * @method static Money TJS(float $amount = 0.0)
+ * @method static Money TRY(float $amount = 0.0)
+ * @method static Money TMT(float $amount = 0.0)
+ * @method static Money UZS(float $amount = 0.0)
+ * @method static Money UAH(float $amount = 0.0)
+ * @method static Money CZK(float $amount = 0.0)
+ * @method static Money SEK(float $amount = 0.0)
+ * @method static Money CHF(float $amount = 0.0)
+ * @method static Money ZAR(float $amount = 0.0)
+ * @method static Money KRW(float $amount = 0.0)
+ * @method static Money JPY(float $amount = 0.0)
  */
 class Money implements \JsonSerializable
 {
@@ -38,6 +73,19 @@ class Money implements \JsonSerializable
         if ($useCurrencyConversationStrategy || $config->useCurrencyConversation()) {
             $this->exchanger = $config->getExchanger();
         }
+    }
+
+    /**
+     * @param string $name
+     * @param array $arguments
+     * @return Money
+     * @throws Exception\RequiredParameterMissedException
+     */
+    public static function __callStatic(string $name, array $arguments): Money
+    {
+        $currency = $name;
+        $amount = $arguments[0] ?? 0.0;
+        return new self($amount, $currency);
     }
 
     /**
