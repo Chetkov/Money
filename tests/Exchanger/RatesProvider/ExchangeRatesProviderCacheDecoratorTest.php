@@ -12,20 +12,37 @@ use PHPUnit\Framework\TestCase;
  */
 class ExchangeRatesProviderCacheDecoratorTest extends TestCase
 {
-
+    /**
+     * @throws \Exception
+     */
     public function testLoad(): void
     {
         $simpleRatesProvider = new SimpleExchangeRatesProvider(['USD-RUB' => 66.34]);
         $cachingProviderDecorator = new ExchangeRatesProviderCacheDecorator($simpleRatesProvider, 1);
 
-        $rates = $cachingProviderDecorator->getRates();
+        $yesterdayDateTime = new \DateTimeImmutable('-1 day');
+
+        $yesterdayRates = $cachingProviderDecorator->getRates($yesterdayDateTime);
         $simpleRatesProvider->addCurrencyPair('EUR-RUB', 72.5);
 
-        $ratesFromCache = $cachingProviderDecorator->getRates();
-        sleep(2);
-        $actualRates = $cachingProviderDecorator->getRates();
+        $todayRates = $cachingProviderDecorator->getRates();
+        $simpleRatesProvider->addCurrencyPair('EUR-USD', 1.2);
 
-        $assertion = $rates === $ratesFromCache && $actualRates !== $ratesFromCache;
-        $this->assertTrue($assertion);
+        $yesterdayRatesFromCache = $cachingProviderDecorator->getRates($yesterdayDateTime);
+        $todayRatesFromCache = $cachingProviderDecorator->getRates();
+
+        sleep(2);
+        $actualYesterdayRates = $cachingProviderDecorator->getRates($yesterdayDateTime);
+        $actualTodayRates = $cachingProviderDecorator->getRates();
+
+        $assertionForYesterdayRates =
+            $yesterdayRates === $yesterdayRatesFromCache
+            && $actualYesterdayRates !== $yesterdayRatesFromCache;
+
+        $assertionForTodayRates =
+            $todayRates === $todayRatesFromCache
+            && $actualTodayRates !== $todayRatesFromCache;
+
+        $this->assertTrue($assertionForYesterdayRates && $assertionForTodayRates);
     }
 }

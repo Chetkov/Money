@@ -8,14 +8,19 @@ namespace Chetkov\Money\Exchanger\RatesProvider;
  */
 class ExchangeRatesProviderCacheDecorator implements ExchangeRatesProviderInterface
 {
+    private const DEFAULT_DATETIME_FORMAT = 'Y-m-d';
+
     /** @var ExchangeRatesProviderInterface */
     private $exchangeRatesProvider;
 
     /** @var int */
     private $ttlInSeconds;
 
-    /** @var int */
-    private $ttlExpirationTime;
+    /** @var string */
+    private $dateTimeFormat;
+
+    /** @var int[] */
+    private $ttlExpirationTimeLabels = [];
 
     /** @var array */
     private $rates = [];
@@ -24,24 +29,29 @@ class ExchangeRatesProviderCacheDecorator implements ExchangeRatesProviderInterf
      * ExchangeRatesProviderCacheDecorator constructor.
      * @param ExchangeRatesProviderInterface $exchangeRatesProvider
      * @param int $ttlInSeconds
+     * @param string $dateTimeFormat
      */
-    public function __construct(ExchangeRatesProviderInterface $exchangeRatesProvider, int $ttlInSeconds = 0)
-    {
+    public function __construct(
+        ExchangeRatesProviderInterface $exchangeRatesProvider,
+        int $ttlInSeconds = 0,
+        string $dateTimeFormat = self::DEFAULT_DATETIME_FORMAT
+    ) {
         $this->exchangeRatesProvider = $exchangeRatesProvider;
         $this->ttlInSeconds = $ttlInSeconds;
-        $this->ttlExpirationTime = time();
+        $this->dateTimeFormat = $dateTimeFormat;
     }
 
     /**
-     * @param \DateTimeImmutable $dateTime
+     * @param \DateTimeImmutable|null $dateTime
      * @return array
      */
     public function getRates(?\DateTimeImmutable $dateTime = null): array
     {
-        if (!$this->rates || $this->ttlExpirationTime < time()) {
-            $this->rates = $this->exchangeRatesProvider->getRates($dateTime);
-            $this->ttlExpirationTime = time() + $this->ttlInSeconds;
+        $key = $dateTime ? $dateTime->format($this->dateTimeFormat) : '';
+        if (!isset($this->rates[$key], $this->ttlExpirationTimeLabels[$key]) || $this->ttlExpirationTimeLabels[$key] < time()) {
+            $this->rates[$key] = $this->exchangeRatesProvider->getRates($dateTime);
+            $this->ttlExpirationTimeLabels[$key] = time() + $this->ttlInSeconds;
         }
-        return $this->rates;
+        return $this->rates[$key];
     }
 }
