@@ -183,7 +183,7 @@ class Money implements \JsonSerializable
      * @throws Exception\ExchangeRateWasNotFoundException
      * @throws Exception\OperationWithDifferentCurrenciesException
      */
-    public function equals(self $other, bool $isCrossCurrencyComparison = false, float $allowableDeviationPercent = 0): bool
+    public function equals(self $other, bool $isCrossCurrencyComparison = false, float $allowableDeviationPercent = 0.0): bool
     {
         if ($isCrossCurrencyComparison) {
             $other = $this->convertToCurrentCurrency($other);

@@ -3,6 +3,7 @@
 namespace Chetkov\Money\Exchange\RatesLoading;
 
 use Chetkov\Money\CurrencyEnum;
+use Chetkov\Money\Exception\MoneyException;
 
 /**
  * Class CrbExchangeRatesLoader
@@ -46,6 +47,12 @@ class CbrExchangeRatesLoader implements ExchangeRatesLoaderInterface
     {
         $dateTime = $dateTime ?? new \DateTimeImmutable();
         $apiUrl = self::API_URL . $dateTime->format(self::DATE_TIME_FORMAT);
-        return file_get_contents($apiUrl);
+
+        $content = file_get_contents($apiUrl);
+        if ($content === false) {
+            throw new MoneyException('Error of exchange rates getting. Loader: ' . get_class($this));
+        }
+
+        return $content;
     }
 }
