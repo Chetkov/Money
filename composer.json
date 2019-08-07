@@ -14,13 +14,16 @@
             "Chetkov\\Money\\": "src/"
         }
     },
+    "minimum-stability": "dev",
     "autoload-dev": {
         "psr-4": {
             "Tests\\Chetkov\\Money\\": "tests/"
         },
         "files": ["constants.php"]
     },
-    "require": {},
+    "require": {
+        "v.chetkov/data-structures": "*"
+    },
     "require-dev": {
         "phpunit/phpunit": "^7.5",
         "phpstan/phpstan": "^0.11.8",
