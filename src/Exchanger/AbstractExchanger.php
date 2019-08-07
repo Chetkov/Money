@@ -5,6 +5,7 @@ namespace Chetkov\Money\Exchanger;
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
 use Chetkov\Money\Exchanger\RatesProvider\ExchangeRatesProviderInterface;
+use Chetkov\Money\Helper\CurrencyPairHelper;
 use Chetkov\Money\Money;
 
 /**
@@ -56,4 +57,33 @@ abstract class AbstractExchanger implements ExchangerInterface
         string $currency,
         array $exchangeRates
     ): float;
+
+    /**
+     * @param float $amount
+     * @param string $sellingCurrency
+     * @param string $purchasedCurrency
+     * @param array $exchangeRates
+     * @return float
+     * @throws ExchangeRateWasNotFoundException
+     */
+    protected function calculateExchangeAmount(
+        float $amount,
+        string $sellingCurrency,
+        string $purchasedCurrency,
+        array $exchangeRates
+    ): float {
+        $currencyPair = CurrencyPairHelper::implode($sellingCurrency, $purchasedCurrency);
+        $reversePair = CurrencyPairHelper::reverse($currencyPair);
+        switch (true) {
+            case isset($exchangeRates[$currencyPair]):
+                $amount *= $exchangeRates[$currencyPair];
+                break;
+            case isset($exchangeRates[$reversePair]):
+                $amount /= $exchangeRates[$reversePair];
+                break;
+            default:
+                throw new ExchangeRateWasNotFoundException($currencyPair);
+        }
+        return $amount;
+    }
 }

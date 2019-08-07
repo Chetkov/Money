@@ -66,18 +66,9 @@ class GraphRatesSearchingExchangerDecorator extends AbstractExchanger
 
         $exchangedAmount = $money->getAmount();
         for ($i = 0; $i < $pathLength - 1; $i++) {
-            $currencyPair = CurrencyPairHelper::implode($exchangePath[$i], $exchangePath[$i + 1]);
-            $reversePair = CurrencyPairHelper::reverse($currencyPair);
-            switch (true) {
-                case isset($exchangeRates[$currencyPair]):
-                    $exchangedAmount *= $exchangeRates[$currencyPair];
-                    break;
-                case isset($exchangeRates[$reversePair]):
-                    $exchangedAmount /= $exchangeRates[$reversePair];
-                    break;
-                default:
-                    throw new ExchangeRateWasNotFoundException($currencyPair);
-            }
+            $sellingCurrency = $exchangePath[$i];
+            $purchasedCurrency = $exchangePath[$i + 1];
+            $exchangedAmount = $this->calculateExchangeAmount($exchangedAmount, $sellingCurrency, $purchasedCurrency, $exchangeRates);
         }
 
         return $exchangedAmount;
