@@ -1,8 +1,8 @@
 <?php
 
-use Chetkov\Money\Exchange\SimpleExchanger;
-use Chetkov\Money\Exchange\ExchangerInterface;
-use Chetkov\Money\Exchange\RatesLoading\SimpleExchangeRatesLoader;
+use Chetkov\Money\Exchanger\ExchangerInterface;
+use Chetkov\Money\Exchanger\RatesLoading\SimpleExchangeRatesLoader;
+use Chetkov\Money\Exchanger\SimpleExchanger;
 
 $exchangeRates = [
     'USD-RUB' => 66.34,

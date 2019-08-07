@@ -1,18 +1,18 @@
 <?php
 
-namespace Chetkov\Money\Exchange;
+namespace Chetkov\Money\Exchanger;
 
 use Chetkov\DataStructures\Graph\Graph;
 use Chetkov\DataStructures\Graph\PathFinder\ShortestPathFinder;
 use Chetkov\Money\CurrencyEnum;
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\Exchange\RatesLoading\ExchangeRatesLoaderInterface;
+use Chetkov\Money\Exchanger\RatesLoading\ExchangeRatesLoaderInterface;
 use Chetkov\Money\Money;
 
 /**
  * Class GraphRatesSearchingExchangerDecorator
- * @package Chetkov\Money\Exchange
+ * @package Chetkov\Money\Exchanger
  */
 class GraphRatesSearchingExchangerDecorator extends AbstractExchanger
 {
@@ -20,7 +20,7 @@ class GraphRatesSearchingExchangerDecorator extends AbstractExchanger
     private $exchanger;
 
     /**
-     * GraphExchanger constructor.
+     * GraphRatesSearchingExchangerDecorator constructor.
      * @param ExchangerInterface $exchanger
      * @param ExchangeRatesLoaderInterface $exchangeRatesLoader
      */

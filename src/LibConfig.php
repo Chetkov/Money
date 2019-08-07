@@ -3,7 +3,7 @@
 namespace Chetkov\Money;
 
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\Exchange\ExchangerInterface;
+use Chetkov\Money\Exchanger\ExchangerInterface;
 
 /**
  * Class LibConfig

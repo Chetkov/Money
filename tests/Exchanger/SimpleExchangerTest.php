@@ -1,18 +1,18 @@
 <?php
 
-namespace Tests\Chetkov\Money\Exchange;
+namespace Tests\Chetkov\Money\Exchanger;
 
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\Exchange\SimpleExchanger;
-use Chetkov\Money\Exchange\RatesLoading\SimpleExchangeRatesLoader;
+use Chetkov\Money\Exchanger\RatesLoading\SimpleExchangeRatesLoader;
+use Chetkov\Money\Exchanger\SimpleExchanger;
 use Chetkov\Money\LibConfig;
 use Chetkov\Money\Money;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Class SimpleExchangerTest
- * @package Tests\Chetkov\Money\Exchange
+ * @package Tests\Chetkov\Money\Exchanger
  */
 class SimpleExchangerTest extends TestCase
 {

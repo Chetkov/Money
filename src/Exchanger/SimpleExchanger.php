@@ -1,6 +1,6 @@
 <?php
 
-namespace Chetkov\Money\Exchange;
+namespace Chetkov\Money\Exchanger;
 
 use Chetkov\Money\CurrencyEnum;
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
@@ -8,7 +8,7 @@ use Chetkov\Money\Money;
 
 /**
  * Class SimpleExchanger
- * @package Chetkov\Money\Exchange
+ * @package Chetkov\Money\Exchanger
  */
 class SimpleExchanger extends AbstractExchanger
 {

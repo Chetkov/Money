@@ -1,10 +1,10 @@
 <?php
 
-namespace Chetkov\Money\Exchange\RatesLoading;
+namespace Chetkov\Money\Exchanger\RatesLoading;
 
 /**
  * Class ExchangeRatesLoaderCacheDecorator
- * @package Chetkov\Money
+ * @package Chetkov\Money\Exchanger\RatesLoading
  */
 class ExchangeRatesLoaderCacheDecorator implements ExchangeRatesLoaderInterface
 {

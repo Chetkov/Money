@@ -2,7 +2,7 @@
 
 namespace Chetkov\Money;
 
-use Chetkov\Money\Exchange\ExchangerInterface;
+use Chetkov\Money\Exchanger\ExchangerInterface;
 
 /**
  * Class Money

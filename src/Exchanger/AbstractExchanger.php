@@ -1,15 +1,15 @@
 <?php
 
-namespace Chetkov\Money\Exchange;
+namespace Chetkov\Money\Exchanger;
 
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\Exchange\RatesLoading\ExchangeRatesLoaderInterface;
+use Chetkov\Money\Exchanger\RatesLoading\ExchangeRatesLoaderInterface;
 use Chetkov\Money\Money;
 
 /**
  * Class AbstractExchanger
- * @package Chetkov\Money\Exchange
+ * @package Chetkov\Money\Exchanger
  */
 abstract class AbstractExchanger implements ExchangerInterface
 {
@@ -17,7 +17,7 @@ abstract class AbstractExchanger implements ExchangerInterface
     protected $exchangeRatesLoader;
 
     /**
-     * Exchanger constructor.
+     * AbstractExchanger constructor.
      * @param ExchangeRatesLoaderInterface $exchangeRatesLoader
      */
     public function __construct(ExchangeRatesLoaderInterface $exchangeRatesLoader)

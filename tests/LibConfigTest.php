@@ -3,7 +3,7 @@
 namespace Tests\Chetkov\Money;
 
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\Exchange\ExchangerInterface;
+use Chetkov\Money\Exchanger\ExchangerInterface;
 use Chetkov\Money\LibConfig;
 use PHPUnit\Framework\TestCase;
 

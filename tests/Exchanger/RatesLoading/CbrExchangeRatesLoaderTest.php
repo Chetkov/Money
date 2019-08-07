@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Chetkov\Money\Exchange\RatesLoading;
+namespace Tests\Chetkov\Money\Exchanger\RatesLoading;
 
-use Chetkov\Money\Exchange\RatesLoading\CbrExchangeRatesLoader;
+use Chetkov\Money\Exchanger\RatesLoading\CbrExchangeRatesLoader;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Class CbrExchangeRatesLoaderTest
- * @package Tests\Chetkov\Money\Exchange\RatesLoading
+ * @package Tests\Chetkov\Money\Exchanger\RatesLoading
  */
 class CbrExchangeRatesLoaderTest extends TestCase
 {

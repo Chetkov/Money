@@ -1,10 +1,10 @@
 <?php
 
-namespace Chetkov\Money\Exchange\RatesLoading;
+namespace Chetkov\Money\Exchanger\RatesLoading;
 
 /**
  * Class SimpleExchangeRatesLoader
- * @package Chetkov\Money
+ * @package Chetkov\Money\Exchanger\RatesLoading
  */
 class SimpleExchangeRatesLoader implements ExchangeRatesLoaderInterface
 {
@@ -15,7 +15,7 @@ class SimpleExchangeRatesLoader implements ExchangeRatesLoaderInterface
     private $exchangeRates;
 
     /**
-     * Exchanger constructor.
+     * SimpleExchangeRatesLoader constructor.
      * @param float[] $exchangeRates Example: ['USD-RUB' => 66.34]
      */
     public function __construct(array $exchangeRates = [])
