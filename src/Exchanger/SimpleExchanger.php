@@ -22,7 +22,7 @@ class SimpleExchanger extends AbstractExchanger
     protected function doExchange(Money $money, string $currency, array $exchangeRates): float
     {
         $currencyPair = CurrencyPairHelper::implode($money->getCurrency(), $currency);
-        $reversePair = CurrencyPairHelper::implode($currency, $money->getCurrency());
+        $reversePair = CurrencyPairHelper::reverse($currencyPair);
         switch (true) {
             case isset($exchangeRates[$currencyPair]):
                 $exchangedAmount = $money->getAmount() * $exchangeRates[$currencyPair];

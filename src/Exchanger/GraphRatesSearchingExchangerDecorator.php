@@ -67,7 +67,7 @@ class GraphRatesSearchingExchangerDecorator extends AbstractExchanger
         $exchangedAmount = $money->getAmount();
         for ($i = 0; $i < $pathLength - 1; $i++) {
             $currencyPair = CurrencyPairHelper::implode($exchangePath[$i], $exchangePath[$i + 1]);
-            $reversePair = CurrencyPairHelper::implode($exchangePath[$i + 1], $exchangePath[$i]);
+            $reversePair = CurrencyPairHelper::reverse($currencyPair);
             switch (true) {
                 case isset($exchangeRates[$currencyPair]):
                     $exchangedAmount *= $exchangeRates[$currencyPair];
@@ -104,7 +104,7 @@ class GraphRatesSearchingExchangerDecorator extends AbstractExchanger
     {
         $graph = new Graph();
         foreach ($exchangeRates as $currencyPair => $rate) {
-            [$fromCurrency, $toCurrency] = explode('-', $currencyPair);
+            [$fromCurrency, $toCurrency] = CurrencyPairHelper::explode($currencyPair);
             $graph
                 ->addNode($fromCurrency)
                 ->addNode($toCurrency)

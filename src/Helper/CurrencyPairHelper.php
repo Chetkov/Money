@@ -19,4 +19,22 @@ class CurrencyPairHelper
     {
         return implode(self::DELIMITER, [$sellingCurrencyCode, $purchasedCurrencyCode]);
     }
+
+    /**
+     * @param string $pairCode
+     * @return string[] [$sellingCurrencyCode, $purchasedCurrencyCode]
+     */
+    public static function explode(string $pairCode): array
+    {
+        return explode(self::DELIMITER, $pairCode);
+    }
+
+    /**
+     * @param string $pairCode
+     * @return string
+     */
+    public static function reverse(string $pairCode): string
+    {
+        return self::implode(...array_reverse(self::explode($pairCode)));
+    }
 }
