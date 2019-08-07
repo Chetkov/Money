@@ -4,17 +4,17 @@ namespace Tests\Chetkov\Money\Exchange;
 
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\Exchange\Exchanger;
+use Chetkov\Money\Exchange\SimpleExchanger;
 use Chetkov\Money\Exchange\RatesLoading\SimpleExchangeRatesLoader;
 use Chetkov\Money\LibConfig;
 use Chetkov\Money\Money;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class ExchangerTest
+ * Class SimpleExchangerTest
  * @package Tests\Chetkov\Money\Exchange
  */
-class ExchangerTest extends TestCase
+class SimpleExchangerTest extends TestCase
 {
     /**
      * @throws RequiredParameterMissedException
@@ -46,7 +46,7 @@ class ExchangerTest extends TestCase
         [$currencyPair, $exchangeRate] = $exchangeConfig;
         $exchangeRatesLoader->addCurrencyPair($currencyPair, $exchangeRate);
 
-        $exchanger = new Exchanger($exchangeRatesLoader);
+        $exchanger = new SimpleExchanger($exchangeRatesLoader);
 
         $exchangedMoney = $exchanger->exchange($money, $currency, $roundingPrecision);
         $this->assertEquals($expectedResult, [$exchangedMoney->getAmount(), $exchangedMoney->getCurrency()]);
@@ -74,7 +74,7 @@ class ExchangerTest extends TestCase
     {
         $money = new Money(100, 'USD');
         $exchangeRatesLoader = SimpleExchangeRatesLoader::getInstance();
-        $exchanger = new Exchanger($exchangeRatesLoader);
+        $exchanger = new SimpleExchanger($exchangeRatesLoader);
 
         $this->expectException(ExchangeRateWasNotFoundException::class);
         $exchanger->exchange($money, 'LEI');

@@ -1,6 +1,6 @@
 <?php
 
-use Chetkov\Money\Exchange\Exchanger;
+use Chetkov\Money\Exchange\SimpleExchanger;
 use Chetkov\Money\Exchange\ExchangerInterface;
 use Chetkov\Money\Exchange\RatesLoading\SimpleExchangeRatesLoader;
 
@@ -16,7 +16,7 @@ return [
         static $instance;
         if (null === $instance) {
             $ratesLoader = SimpleExchangeRatesLoader::getInstance($exchangeRates);
-            $instance = new Exchanger($ratesLoader);
+            $instance = new SimpleExchanger($ratesLoader);
         }
         return $instance;
     },

@@ -2,20 +2,19 @@
 
 namespace Chetkov\Money\Exchange;
 
-use Chetkov\Money\CurrencyEnum;
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
 use Chetkov\Money\Exchange\RatesLoading\ExchangeRatesLoaderInterface;
 use Chetkov\Money\Money;
 
 /**
- * Class Exchanger
+ * Class AbstractExchanger
  * @package Chetkov\Money\Exchange
  */
-class Exchanger implements ExchangerInterface
+abstract class AbstractExchanger implements ExchangerInterface
 {
     /** @var ExchangeRatesLoaderInterface */
-    private $exchangeRatesLoader;
+    protected $exchangeRatesLoader;
 
     /**
      * Exchanger constructor.
@@ -34,23 +33,27 @@ class Exchanger implements ExchangerInterface
      * @throws ExchangeRateWasNotFoundException
      * @throws RequiredParameterMissedException
      * TODO: Учитывать курс покупки/продажи
-     * TODO: Искать по графу пути обмена через другие валюты для пар не связанных на прямую
      */
     public function exchange(Money $money, string $currency, int $roundingPrecision = 2): Money
     {
-        $currencyPair = CurrencyEnum::getCurrencyPairCode($money->getCurrency(), $currency);
-        $reversePair = CurrencyEnum::getCurrencyPairCode($currency, $money->getCurrency());
         $exchangeRates = $this->exchangeRatesLoader->load();
-        switch (true) {
-            case isset($exchangeRates[$currencyPair]):
-                $exchangedAmount = round($money->getAmount() * $exchangeRates[$currencyPair], $roundingPrecision);
-                break;
-            case isset($exchangeRates[$reversePair]):
-                $exchangedAmount = round($money->getAmount() / $exchangeRates[$reversePair], $roundingPrecision);
-                break;
-            default:
-                throw new ExchangeRateWasNotFoundException($currencyPair);
-        }
+
+        $exchangedAmount = $this->doExchange($money, $currency, $exchangeRates);
+        $exchangedAmount = round($exchangedAmount, $roundingPrecision);
+
         return new Money($exchangedAmount, $currency);
     }
+
+    /**
+     * @param Money $money
+     * @param string $currency
+     * @param array $exchangeRates
+     * @return float
+     * @throws ExchangeRateWasNotFoundException
+     */
+    abstract protected function doExchange(
+        Money $money,
+        string $currency,
+        array $exchangeRates
+    ): float;
 }
