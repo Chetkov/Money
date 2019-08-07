@@ -1,7 +1,7 @@
 <?php
 
 use Chetkov\Money\Exchanger\ExchangerInterface;
-use Chetkov\Money\Exchanger\RatesLoading\SimpleExchangeRatesProvider;
+use Chetkov\Money\Exchanger\RatesProvider\SimpleExchangeRatesProvider;
 use Chetkov\Money\Exchanger\SimpleExchanger;
 
 $exchangeRates = [

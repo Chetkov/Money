@@ -4,7 +4,7 @@ namespace Tests\Chetkov\Money\Exchanger;
 
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\Exchanger\RatesLoading\SimpleExchangeRatesProvider;
+use Chetkov\Money\Exchanger\RatesProvider\SimpleExchangeRatesProvider;
 use Chetkov\Money\Exchanger\SimpleExchanger;
 use Chetkov\Money\LibConfig;
 use Chetkov\Money\Money;

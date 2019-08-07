@@ -1,13 +1,13 @@
 <?php
 
-namespace Chetkov\Money\Exchanger\RatesLoading;
+namespace Chetkov\Money\Exchanger\RatesProvider;
 
 use Chetkov\Money\CurrencyEnum;
 use Chetkov\Money\Exception\MoneyException;
 
 /**
  * Class CbrExchangeRatesProvider
- * @package Chetkov\Money\Exchanger\RatesLoading
+ * @package Chetkov\Money\Exchanger\RatesProvider
  */
 class CbrExchangeRatesProvider implements ExchangeRatesProviderInterface
 {

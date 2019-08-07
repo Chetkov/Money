@@ -1,14 +1,14 @@
 <?php
 
-namespace Tests\Chetkov\Money\Exchanger\RatesLoading;
+namespace Tests\Chetkov\Money\Exchanger\RatesProvider;
 
-use Chetkov\Money\Exchanger\RatesLoading\ExchangeRatesProviderCacheDecorator;
-use Chetkov\Money\Exchanger\RatesLoading\SimpleExchangeRatesProvider;
+use Chetkov\Money\Exchanger\RatesProvider\ExchangeRatesProviderCacheDecorator;
+use Chetkov\Money\Exchanger\RatesProvider\SimpleExchangeRatesProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Class ExchangeRatesProviderCacheDecoratorTest
- * @package Tests\Chetkov\Money\Exchanger\RatesLoading
+ * @package Tests\Chetkov\Money\Exchanger\RatesProvider
  */
 class ExchangeRatesProviderCacheDecoratorTest extends TestCase
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Chetkov\Money\Exchanger\RatesLoading;
+namespace Chetkov\Money\Exchanger\RatesProvider;
 
 /**
  * Class SimpleExchangeRatesProvider
- * @package Chetkov\Money\Exchanger\RatesLoading
+ * @package Chetkov\Money\Exchanger\RatesProvider
  */
 class SimpleExchangeRatesProvider implements ExchangeRatesProviderInterface
 {

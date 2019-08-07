@@ -4,7 +4,7 @@ namespace Chetkov\Money\Exchanger;
 
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\Exchanger\RatesLoading\ExchangeRatesProviderInterface;
+use Chetkov\Money\Exchanger\RatesProvider\ExchangeRatesProviderInterface;
 use Chetkov\Money\Money;
 
 /**

@@ -1,15 +1,15 @@
 <?php
 
-namespace Tests\Chetkov\Money\Exchanger\RatesLoading;
+namespace Tests\Chetkov\Money\Exchanger\RatesProvider;
 
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\Exchanger\RatesLoading\SimpleExchangeRatesProvider;
+use Chetkov\Money\Exchanger\RatesProvider\SimpleExchangeRatesProvider;
 use Chetkov\Money\LibConfig;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Class SimpleExchangeRatesProviderTest
- * @package Tests\Chetkov\Money\Exchanger\RatesLoading
+ * @package Tests\Chetkov\Money\Exchanger\RatesProvider
  */
 class SimpleExchangeRatesProviderTest extends TestCase
 {

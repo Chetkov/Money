@@ -1,10 +1,10 @@
 <?php
 
-namespace Chetkov\Money\Exchanger\RatesLoading;
+namespace Chetkov\Money\Exchanger\RatesProvider;
 
 /**
  * Interface ExchangeRatesProviderInterface
- * @package Chetkov\Money\Exchanger\RatesLoading
+ * @package Chetkov\Money\Exchanger\RatesProvider
  */
 interface ExchangeRatesProviderInterface
 {
