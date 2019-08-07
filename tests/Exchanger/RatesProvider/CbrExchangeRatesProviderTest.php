@@ -16,15 +16,15 @@ class CbrExchangeRatesProviderTest extends TestCase
      */
     public function testLoad(): void
     {
-        $ratesLoader = $this->createPartialMock(CbrExchangeRatesProvider::class, ['executeRequest']);
+        $ratesProvider = $this->createPartialMock(CbrExchangeRatesProvider::class, ['executeRequest']);
 
         $rawCbrXMLResponse = file_get_contents(__DIR__ . '/cbr-response.xml');
-        $ratesLoader
+        $ratesProvider
             ->method('executeRequest')
             ->willReturn($rawCbrXMLResponse);
 
-        /** @var CbrExchangeRatesProvider $ratesLoader */
-        $rates = $ratesLoader->getRates();
+        /** @var CbrExchangeRatesProvider $ratesProvider */
+        $rates = $ratesProvider->getRates();
 
         $resultRatesJSON = file_get_contents(__DIR__ . '/cbr-result-rates.json');
         $this->assertEquals(json_decode($resultRatesJSON, true), $rates);

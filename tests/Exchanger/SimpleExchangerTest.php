@@ -42,11 +42,11 @@ class SimpleExchangerTest extends TestCase
         array $expectedResult,
         int $roundingPrecision = 2
     ): void {
-        $exchangeRatesLoader = SimpleExchangeRatesProvider::getInstance();
+        $exchangeRatesProvider = SimpleExchangeRatesProvider::getInstance();
         [$currencyPair, $exchangeRate] = $exchangeConfig;
-        $exchangeRatesLoader->addCurrencyPair($currencyPair, $exchangeRate);
+        $exchangeRatesProvider->addCurrencyPair($currencyPair, $exchangeRate);
 
-        $exchanger = new SimpleExchanger($exchangeRatesLoader);
+        $exchanger = new SimpleExchanger($exchangeRatesProvider);
 
         $exchangedMoney = $exchanger->exchange($money, $currency, $roundingPrecision);
         $this->assertEquals($expectedResult, [$exchangedMoney->getAmount(), $exchangedMoney->getCurrency()]);
@@ -73,8 +73,8 @@ class SimpleExchangerTest extends TestCase
     public function testExchangeNegative(): void
     {
         $money = new Money(100, 'USD');
-        $exchangeRatesLoader = SimpleExchangeRatesProvider::getInstance();
-        $exchanger = new SimpleExchanger($exchangeRatesLoader);
+        $exchangeRatesProvider = SimpleExchangeRatesProvider::getInstance();
+        $exchanger = new SimpleExchanger($exchangeRatesProvider);
 
         $this->expectException(ExchangeRateWasNotFoundException::class);
         $exchanger->exchange($money, 'LEI');

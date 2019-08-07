@@ -22,11 +22,11 @@ class GraphRatesSearchingExchangerDecorator extends AbstractExchanger
     /**
      * GraphRatesSearchingExchangerDecorator constructor.
      * @param ExchangerInterface $exchanger
-     * @param ExchangeRatesProviderInterface $exchangeRatesLoader
+     * @param ExchangeRatesProviderInterface $exchangeRatesProvider
      */
-    public function __construct(ExchangerInterface $exchanger, ExchangeRatesProviderInterface $exchangeRatesLoader)
+    public function __construct(ExchangerInterface $exchanger, ExchangeRatesProviderInterface $exchangeRatesProvider)
     {
-        parent::__construct($exchangeRatesLoader);
+        parent::__construct($exchangeRatesProvider);
         $this->exchanger = $exchanger;
     }
 

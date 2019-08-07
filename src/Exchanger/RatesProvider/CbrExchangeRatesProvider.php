@@ -50,7 +50,7 @@ class CbrExchangeRatesProvider implements ExchangeRatesProviderInterface
 
         $content = file_get_contents($apiUrl);
         if ($content === false) {
-            throw new MoneyException('Error of exchange rates getting. Loader: ' . get_class($this));
+            throw new MoneyException('Error of exchange rates getting. Provider: ' . get_class($this));
         }
 
         return $content;

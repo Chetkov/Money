@@ -15,15 +15,15 @@ class ExchangeRatesProviderCacheDecoratorTest extends TestCase
 
     public function testLoad(): void
     {
-        $simpleRatesLoader = new SimpleExchangeRatesProvider(['USD-RUB' => 66.34]);
-        $cachingLoaderDecorator = new ExchangeRatesProviderCacheDecorator($simpleRatesLoader, 1);
+        $simpleRatesProvider = new SimpleExchangeRatesProvider(['USD-RUB' => 66.34]);
+        $cachingProviderDecorator = new ExchangeRatesProviderCacheDecorator($simpleRatesProvider, 1);
 
-        $rates = $cachingLoaderDecorator->getRates();
-        $simpleRatesLoader->addCurrencyPair('EUR-RUB', 72.5);
+        $rates = $cachingProviderDecorator->getRates();
+        $simpleRatesProvider->addCurrencyPair('EUR-RUB', 72.5);
 
-        $ratesFromCache = $cachingLoaderDecorator->getRates();
+        $ratesFromCache = $cachingProviderDecorator->getRates();
         sleep(2);
-        $actualRates = $cachingLoaderDecorator->getRates();
+        $actualRates = $cachingProviderDecorator->getRates();
 
         $assertion = $rates === $ratesFromCache && $actualRates !== $ratesFromCache;
         $this->assertTrue($assertion);

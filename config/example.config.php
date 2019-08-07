@@ -15,8 +15,8 @@ return [
     'exchanger_factory' => static function () use ($exchangeRates): ExchangerInterface {
         static $instance;
         if (null === $instance) {
-            $ratesLoader = SimpleExchangeRatesProvider::getInstance($exchangeRates);
-            $instance = new SimpleExchanger($ratesLoader);
+            $ratesProvider = SimpleExchangeRatesProvider::getInstance($exchangeRates);
+            $instance = new SimpleExchanger($ratesProvider);
         }
         return $instance;
     },

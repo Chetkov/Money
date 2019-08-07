@@ -14,15 +14,15 @@ use Chetkov\Money\Money;
 abstract class AbstractExchanger implements ExchangerInterface
 {
     /** @var ExchangeRatesProviderInterface */
-    protected $exchangeRatesLoader;
+    protected $exchangeRatesProvider;
 
     /**
      * AbstractExchanger constructor.
-     * @param ExchangeRatesProviderInterface $exchangeRatesLoader
+     * @param ExchangeRatesProviderInterface $exchangeRatesProvider
      */
-    public function __construct(ExchangeRatesProviderInterface $exchangeRatesLoader)
+    public function __construct(ExchangeRatesProviderInterface $exchangeRatesProvider)
     {
-        $this->exchangeRatesLoader = $exchangeRatesLoader;
+        $this->exchangeRatesProvider = $exchangeRatesProvider;
     }
 
     /**
@@ -36,7 +36,7 @@ abstract class AbstractExchanger implements ExchangerInterface
      */
     public function exchange(Money $money, string $currency, int $roundingPrecision = 2): Money
     {
-        $exchangeRates = $this->exchangeRatesLoader->getRates();
+        $exchangeRates = $this->exchangeRatesProvider->getRates();
 
         $exchangedAmount = $this->doExchange($money, $currency, $exchangeRates);
         $exchangedAmount = round($exchangedAmount, $roundingPrecision);

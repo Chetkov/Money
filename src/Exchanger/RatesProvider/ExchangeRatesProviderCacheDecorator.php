@@ -9,7 +9,7 @@ namespace Chetkov\Money\Exchanger\RatesProvider;
 class ExchangeRatesProviderCacheDecorator implements ExchangeRatesProviderInterface
 {
     /** @var ExchangeRatesProviderInterface */
-    private $exchangeRatesLoader;
+    private $exchangeRatesProvider;
 
     /** @var int */
     private $ttlInSeconds;
@@ -22,12 +22,12 @@ class ExchangeRatesProviderCacheDecorator implements ExchangeRatesProviderInterf
 
     /**
      * ExchangeRatesProviderCacheDecorator constructor.
-     * @param ExchangeRatesProviderInterface $exchangeRatesLoader
+     * @param ExchangeRatesProviderInterface $exchangeRatesProvider
      * @param int $ttlInSeconds
      */
-    public function __construct(ExchangeRatesProviderInterface $exchangeRatesLoader, int $ttlInSeconds = 0)
+    public function __construct(ExchangeRatesProviderInterface $exchangeRatesProvider, int $ttlInSeconds = 0)
     {
-        $this->exchangeRatesLoader = $exchangeRatesLoader;
+        $this->exchangeRatesProvider = $exchangeRatesProvider;
         $this->ttlInSeconds = $ttlInSeconds;
         $this->ttlExpirationTime = time();
     }
@@ -39,7 +39,7 @@ class ExchangeRatesProviderCacheDecorator implements ExchangeRatesProviderInterf
     public function getRates(?\DateTimeImmutable $dateTime = null): array
     {
         if (!$this->rates || $this->ttlExpirationTime < time()) {
-            $this->rates = $this->exchangeRatesLoader->getRates($dateTime);
+            $this->rates = $this->exchangeRatesProvider->getRates($dateTime);
             $this->ttlExpirationTime = time() + $this->ttlInSeconds;
         }
         return $this->rates;
