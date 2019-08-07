@@ -3,15 +3,15 @@
 namespace Tests\Chetkov\Money\Exchanger\RatesLoading;
 
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\Exchanger\RatesLoading\SimpleExchangeRatesLoader;
+use Chetkov\Money\Exchanger\RatesLoading\SimpleExchangeRatesProvider;
 use Chetkov\Money\LibConfig;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class SimpleExchangeRatesLoaderTest
+ * Class SimpleExchangeRatesProviderTest
  * @package Tests\Chetkov\Money\Exchanger\RatesLoading
  */
-class SimpleExchangeRatesLoaderTest extends TestCase
+class SimpleExchangeRatesProviderTest extends TestCase
 {
     /**
      * @throws RequiredParameterMissedException
@@ -27,19 +27,19 @@ class SimpleExchangeRatesLoaderTest extends TestCase
      */
     public function testGetInstance(): void
     {
-        $reflectionClass = new \ReflectionClass(SimpleExchangeRatesLoader::getInstance());
+        $reflectionClass = new \ReflectionClass(SimpleExchangeRatesProvider::getInstance());
         $instanceProperty = $reflectionClass->getProperty('instance');
         $instanceProperty->setAccessible(true);
         $instanceProperty->setValue(null);
         $instanceProperty->setAccessible(false);
 
-        SimpleExchangeRatesLoader::getInstance(['EUR-TRY' => 6.24]);
+        SimpleExchangeRatesProvider::getInstance(['EUR-TRY' => 6.24]);
         $this->assertTrue(true);
     }
 
     public function testAddCurrencyPair(): void
     {
-        $exchanger = SimpleExchangeRatesLoader::getInstance();
+        $exchanger = SimpleExchangeRatesProvider::getInstance();
         $exchanger->addCurrencyPair('USD-RUB', 66.34);
         $this->assertTrue(true);
     }

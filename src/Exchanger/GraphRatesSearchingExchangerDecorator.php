@@ -7,7 +7,7 @@ use Chetkov\DataStructures\Graph\PathFinder\ShortestPathFinder;
 use Chetkov\Money\CurrencyEnum;
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\Exchanger\RatesLoading\ExchangeRatesLoaderInterface;
+use Chetkov\Money\Exchanger\RatesLoading\ExchangeRatesProviderInterface;
 use Chetkov\Money\Money;
 
 /**
@@ -22,9 +22,9 @@ class GraphRatesSearchingExchangerDecorator extends AbstractExchanger
     /**
      * GraphRatesSearchingExchangerDecorator constructor.
      * @param ExchangerInterface $exchanger
-     * @param ExchangeRatesLoaderInterface $exchangeRatesLoader
+     * @param ExchangeRatesProviderInterface $exchangeRatesLoader
      */
-    public function __construct(ExchangerInterface $exchanger, ExchangeRatesLoaderInterface $exchangeRatesLoader)
+    public function __construct(ExchangerInterface $exchanger, ExchangeRatesProviderInterface $exchangeRatesLoader)
     {
         parent::__construct($exchangeRatesLoader);
         $this->exchanger = $exchanger;

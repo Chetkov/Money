@@ -1,7 +1,7 @@
 <?php
 
 use Chetkov\Money\Exchanger\ExchangerInterface;
-use Chetkov\Money\Exchanger\RatesLoading\SimpleExchangeRatesLoader;
+use Chetkov\Money\Exchanger\RatesLoading\SimpleExchangeRatesProvider;
 use Chetkov\Money\Exchanger\SimpleExchanger;
 
 $exchangeRates = [
@@ -15,7 +15,7 @@ return [
     'exchanger_factory' => static function () use ($exchangeRates): ExchangerInterface {
         static $instance;
         if (null === $instance) {
-            $ratesLoader = SimpleExchangeRatesLoader::getInstance($exchangeRates);
+            $ratesLoader = SimpleExchangeRatesProvider::getInstance($exchangeRates);
             $instance = new SimpleExchanger($ratesLoader);
         }
         return $instance;

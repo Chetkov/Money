@@ -3,12 +3,12 @@
 namespace Chetkov\Money\Exchanger\RatesLoading;
 
 /**
- * Class ExchangeRatesLoaderCacheDecorator
+ * Class ExchangeRatesProviderCacheDecorator
  * @package Chetkov\Money\Exchanger\RatesLoading
  */
-class ExchangeRatesLoaderCacheDecorator implements ExchangeRatesLoaderInterface
+class ExchangeRatesProviderCacheDecorator implements ExchangeRatesProviderInterface
 {
-    /** @var ExchangeRatesLoaderInterface */
+    /** @var ExchangeRatesProviderInterface */
     private $exchangeRatesLoader;
 
     /** @var int */
@@ -21,11 +21,11 @@ class ExchangeRatesLoaderCacheDecorator implements ExchangeRatesLoaderInterface
     private $rates = [];
 
     /**
-     * ExchangeRatesLoaderCacheDecorator constructor.
-     * @param ExchangeRatesLoaderInterface $exchangeRatesLoader
+     * ExchangeRatesProviderCacheDecorator constructor.
+     * @param ExchangeRatesProviderInterface $exchangeRatesLoader
      * @param int $ttlInSeconds
      */
-    public function __construct(ExchangeRatesLoaderInterface $exchangeRatesLoader, int $ttlInSeconds = 0)
+    public function __construct(ExchangeRatesProviderInterface $exchangeRatesLoader, int $ttlInSeconds = 0)
     {
         $this->exchangeRatesLoader = $exchangeRatesLoader;
         $this->ttlInSeconds = $ttlInSeconds;
@@ -36,10 +36,10 @@ class ExchangeRatesLoaderCacheDecorator implements ExchangeRatesLoaderInterface
      * @param \DateTimeImmutable $dateTime
      * @return array
      */
-    public function load(?\DateTimeImmutable $dateTime = null): array
+    public function getRates(?\DateTimeImmutable $dateTime = null): array
     {
         if (!$this->rates || $this->ttlExpirationTime < time()) {
-            $this->rates = $this->exchangeRatesLoader->load($dateTime);
+            $this->rates = $this->exchangeRatesLoader->getRates($dateTime);
             $this->ttlExpirationTime = time() + $this->ttlInSeconds;
         }
         return $this->rates;

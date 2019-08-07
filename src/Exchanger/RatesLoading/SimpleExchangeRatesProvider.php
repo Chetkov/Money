@@ -3,19 +3,19 @@
 namespace Chetkov\Money\Exchanger\RatesLoading;
 
 /**
- * Class SimpleExchangeRatesLoader
+ * Class SimpleExchangeRatesProvider
  * @package Chetkov\Money\Exchanger\RatesLoading
  */
-class SimpleExchangeRatesLoader implements ExchangeRatesLoaderInterface
+class SimpleExchangeRatesProvider implements ExchangeRatesProviderInterface
 {
-    /** @var SimpleExchangeRatesLoader */
+    /** @var SimpleExchangeRatesProvider */
     private static $instance;
 
     /** @var float[] */
     private $exchangeRates;
 
     /**
-     * SimpleExchangeRatesLoader constructor.
+     * SimpleExchangeRatesProvider constructor.
      * @param float[] $exchangeRates Example: ['USD-RUB' => 66.34]
      */
     public function __construct(array $exchangeRates = [])
@@ -25,7 +25,7 @@ class SimpleExchangeRatesLoader implements ExchangeRatesLoaderInterface
 
     /**
      * @param float[] $exchangeRates Example: ['USD-RUB' => 66.34]
-     * @return SimpleExchangeRatesLoader
+     * @return SimpleExchangeRatesProvider
      */
     public static function getInstance(array $exchangeRates = []): self
     {
@@ -43,7 +43,7 @@ class SimpleExchangeRatesLoader implements ExchangeRatesLoaderInterface
     /**
      * @param string $currencyPair
      * @param float $exchangeRate
-     * @return SimpleExchangeRatesLoader
+     * @return SimpleExchangeRatesProvider
      */
     public function addCurrencyPair(string $currencyPair, float $exchangeRate): self
     {
@@ -55,7 +55,7 @@ class SimpleExchangeRatesLoader implements ExchangeRatesLoaderInterface
      * @param \DateTimeImmutable|null $dateTime
      * @return array
      */
-    public function load(?\DateTimeImmutable $dateTime = null): array
+    public function getRates(?\DateTimeImmutable $dateTime = null): array
     {
         return $this->exchangeRates;
     }

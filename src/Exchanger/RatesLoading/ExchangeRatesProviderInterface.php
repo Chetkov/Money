@@ -3,14 +3,14 @@
 namespace Chetkov\Money\Exchanger\RatesLoading;
 
 /**
- * Interface ExchangeRatesLoaderInterface
+ * Interface ExchangeRatesProviderInterface
  * @package Chetkov\Money\Exchanger\RatesLoading
  */
-interface ExchangeRatesLoaderInterface
+interface ExchangeRatesProviderInterface
 {
     /**
      * @param \DateTimeImmutable $dateTime
      * @return array
      */
-    public function load(?\DateTimeImmutable $dateTime = null): array;
+    public function getRates(?\DateTimeImmutable $dateTime = null): array;
 }

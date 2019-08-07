@@ -6,10 +6,10 @@ use Chetkov\Money\CurrencyEnum;
 use Chetkov\Money\Exception\MoneyException;
 
 /**
- * Class CbrExchangeRatesLoader
+ * Class CbrExchangeRatesProvider
  * @package Chetkov\Money\Exchanger\RatesLoading
  */
-class CbrExchangeRatesLoader implements ExchangeRatesLoaderInterface
+class CbrExchangeRatesProvider implements ExchangeRatesProviderInterface
 {
     private const API_URL = 'http://www.cbr.ru/scripts/XML_daily.asp?date_req=';
     private const DATE_TIME_FORMAT = 'd/m/Y';
@@ -19,7 +19,7 @@ class CbrExchangeRatesLoader implements ExchangeRatesLoaderInterface
      * @return array
      * @throws \Exception
      */
-    public function load(?\DateTimeImmutable $dateTime = null): array
+    public function getRates(?\DateTimeImmutable $dateTime = null): array
     {
         $result = [];
 

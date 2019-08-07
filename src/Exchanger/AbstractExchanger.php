@@ -4,7 +4,7 @@ namespace Chetkov\Money\Exchanger;
 
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\Exchanger\RatesLoading\ExchangeRatesLoaderInterface;
+use Chetkov\Money\Exchanger\RatesLoading\ExchangeRatesProviderInterface;
 use Chetkov\Money\Money;
 
 /**
@@ -13,14 +13,14 @@ use Chetkov\Money\Money;
  */
 abstract class AbstractExchanger implements ExchangerInterface
 {
-    /** @var ExchangeRatesLoaderInterface */
+    /** @var ExchangeRatesProviderInterface */
     protected $exchangeRatesLoader;
 
     /**
      * AbstractExchanger constructor.
-     * @param ExchangeRatesLoaderInterface $exchangeRatesLoader
+     * @param ExchangeRatesProviderInterface $exchangeRatesLoader
      */
-    public function __construct(ExchangeRatesLoaderInterface $exchangeRatesLoader)
+    public function __construct(ExchangeRatesProviderInterface $exchangeRatesLoader)
     {
         $this->exchangeRatesLoader = $exchangeRatesLoader;
     }
@@ -36,7 +36,7 @@ abstract class AbstractExchanger implements ExchangerInterface
      */
     public function exchange(Money $money, string $currency, int $roundingPrecision = 2): Money
     {
-        $exchangeRates = $this->exchangeRatesLoader->load();
+        $exchangeRates = $this->exchangeRatesLoader->getRates();
 
         $exchangedAmount = $this->doExchange($money, $currency, $exchangeRates);
         $exchangedAmount = round($exchangedAmount, $roundingPrecision);

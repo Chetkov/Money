@@ -4,7 +4,7 @@ namespace Tests\Chetkov\Money\Exchanger;
 
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\Exchanger\RatesLoading\SimpleExchangeRatesLoader;
+use Chetkov\Money\Exchanger\RatesLoading\SimpleExchangeRatesProvider;
 use Chetkov\Money\Exchanger\SimpleExchanger;
 use Chetkov\Money\LibConfig;
 use Chetkov\Money\Money;
@@ -42,7 +42,7 @@ class SimpleExchangerTest extends TestCase
         array $expectedResult,
         int $roundingPrecision = 2
     ): void {
-        $exchangeRatesLoader = SimpleExchangeRatesLoader::getInstance();
+        $exchangeRatesLoader = SimpleExchangeRatesProvider::getInstance();
         [$currencyPair, $exchangeRate] = $exchangeConfig;
         $exchangeRatesLoader->addCurrencyPair($currencyPair, $exchangeRate);
 
@@ -73,7 +73,7 @@ class SimpleExchangerTest extends TestCase
     public function testExchangeNegative(): void
     {
         $money = new Money(100, 'USD');
-        $exchangeRatesLoader = SimpleExchangeRatesLoader::getInstance();
+        $exchangeRatesLoader = SimpleExchangeRatesProvider::getInstance();
         $exchanger = new SimpleExchanger($exchangeRatesLoader);
 
         $this->expectException(ExchangeRateWasNotFoundException::class);
