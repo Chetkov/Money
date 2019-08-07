@@ -20,8 +20,8 @@ _example.config.php_
 ```php
 <?php 
 
-use Chetkov\Money\Strategy\ExchangeStrategyInterface;
-use Chetkov\Money\Strategy\SimpleExchangeStrategy;
+use Chetkov\Money\Exchange\ExchangerInterface;
+use Chetkov\Money\Exchange\SimpleExchanger;
 
 $exchangeRates = [
     'USD-RUB' => 66.34,
@@ -30,17 +30,17 @@ $exchangeRates = [
 ];
 
 return [
-    'use_exchange_strategy' => true,
-    'exchange_strategy_factory' => static function () use ($exchangeRates): ExchangeStrategyInterface {
+    'use_currency_conversation' => true,
+    'exchanger_factory' => static function () use ($exchangeRates): ExchangerInterface {
         static $instance;
         if (null === $instance) {
-            $instance = SimpleExchangeStrategy::getInstance($exchangeRates);
+            $instance = SimpleExchanger::getInstance($exchangeRates);
         }
         return $instance;
     },
 ];
 ```
-Если параметер `'use_exchange_strategy' => false`, то при выполнении операций с экземплярами _Money_ в разных валютах будет выброшено исключение: _Chetkov\Money\Exception\OperationWithDifferentCurrenciesException_.
+Если параметер `'use_currency_conversation' => false`, то при выполнении операций с экземплярами _Money_ в разных валютах будет выброшено исключение: _Chetkov\Money\Exception\OperationWithDifferentCurrenciesException_.
 
 Вы можете использовать существующие в пакете стратегии обмена валют: 
 1) _SimpleExchangeStrategy_ - реализует шаблон Singleton.
@@ -55,11 +55,11 @@ return [
 ```php
 <?php 
 
-use Chetkov\Money\DTO\PackageConfig;
+use Chetkov\Money\LibConfig;
 
 $config = require __DIR__ . 'config/example.config.php';
 
-PackageConfig::getInstance($config);
+LibConfig::getInstance($config);
 ```
 
 #### Использование
@@ -68,8 +68,8 @@ PackageConfig::getInstance($config);
 
 use Chetkov\Money\Money;
 
-$moneyInUSD = new Money(100, 'USD');
-$moneyInRUB = new Money(200, 'RUB');
+$moneyInUSD = Money::USD(100);
+$moneyInRUB = Money::RUB(200);
 ```
 
 ###### Add:
@@ -152,8 +152,8 @@ $moneyInUSD->equals($moneyInRUB); // false
 - $isCrossCurrenciesComparison - флаг кросс-валютного сравнения (bool)
 - $allowableDeviationPercent - допустимый процент отклонения (float: 0.0 .. 100.0)
 ```php
-$moneyInRUB = new Money(200, 'RUB');
-$moneyInUSD = new Money(3.015, 'USD');
+$moneyInRUB = Money::RUB(200);
+$moneyInUSD = Money::USD(3.015);
 
 $isCrossCurrenciesComparison = true;
 $moneyInRUB->equals($moneyInUSD, $isCrossCurrenciesComparison); // false
