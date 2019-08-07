@@ -281,7 +281,7 @@ class MoneyTest extends TestCase
     {
         $config = require CHETKOV_MONEY_ROOT . '/config/example.config.php';
         $reconfigurePackageConfig = static function (bool $useCurrencyConversation) use ($config) {
-            $config['use_currency_conversation'] = $useCurrencyConversation;
+            $config['is_currency_conversation_enabled'] = $useCurrencyConversation;
             LibConfig::getInstance()->reconfigure($config);
         };
 

@@ -70,7 +70,7 @@ class Money implements \JsonSerializable
         $this->currency = $currency;
 
         $config = LibConfig::getInstance();
-        if ($useCurrencyConversationStrategy || $config->useCurrencyConversation()) {
+        if ($useCurrencyConversationStrategy || $config->isCurrencyConversationEnabled()) {
             $this->exchanger = $config->getExchanger();
         }
     }

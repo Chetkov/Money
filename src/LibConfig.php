@@ -53,9 +53,9 @@ class LibConfig
     /**
      * @return bool
      */
-    public function useCurrencyConversation(): bool
+    public function isCurrencyConversationEnabled(): bool
     {
-        return $this->config['use_currency_conversation'];
+        return $this->config['is_currency_conversation_enabled'];
     }
 
     /**
@@ -73,7 +73,7 @@ class LibConfig
     private function validate(array $config): void
     {
         $requiredParameters = [
-            'use_currency_conversation',
+            'is_currency_conversation_enabled',
             'exchanger_factory',
         ];
 

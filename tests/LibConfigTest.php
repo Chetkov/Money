@@ -43,7 +43,7 @@ class LibConfigTest extends TestCase
     public function testReconfigure(): void
     {
         $this->config->reconfigure([
-            'use_currency_conversation' => true,
+            'is_currency_conversation_enabled' => true,
             'exchanger_factory' => static function () {
                 return $this->createMock(ExchangerInterface::class);
             },
@@ -68,6 +68,6 @@ class LibConfigTest extends TestCase
 
     public function testUseExchangeStrategy(): void
     {
-        $this->assertEquals(true, $this->config->useCurrencyConversation());
+        $this->assertEquals(true, $this->config->isCurrencyConversationEnabled());
     }
 }

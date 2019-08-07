@@ -11,7 +11,7 @@ $exchangeRates = [
 ];
 
 return [
-    'use_currency_conversation' => true,
+    'is_currency_conversation_enabled' => true,
     'exchanger_factory' => static function () use ($exchangeRates): ExchangerInterface {
         static $instance;
         if (null === $instance) {
