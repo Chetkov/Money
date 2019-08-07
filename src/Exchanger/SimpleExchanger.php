@@ -2,8 +2,8 @@
 
 namespace Chetkov\Money\Exchanger;
 
-use Chetkov\Money\CurrencyEnum;
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
+use Chetkov\Money\Helper\CurrencyPairHelper;
 use Chetkov\Money\Money;
 
 /**
@@ -21,8 +21,8 @@ class SimpleExchanger extends AbstractExchanger
      */
     protected function doExchange(Money $money, string $currency, array $exchangeRates): float
     {
-        $currencyPair = CurrencyEnum::getCurrencyPairCode($money->getCurrency(), $currency);
-        $reversePair = CurrencyEnum::getCurrencyPairCode($currency, $money->getCurrency());
+        $currencyPair = CurrencyPairHelper::implode($money->getCurrency(), $currency);
+        $reversePair = CurrencyPairHelper::implode($currency, $money->getCurrency());
         switch (true) {
             case isset($exchangeRates[$currencyPair]):
                 $exchangedAmount = $money->getAmount() * $exchangeRates[$currencyPair];

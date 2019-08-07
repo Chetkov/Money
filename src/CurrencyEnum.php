@@ -5,7 +5,6 @@ namespace Chetkov\Money;
 /**
  * Class CurrencyEnum
  * @package Chetkov\Money
- * TODO: Нужно-ли это перечисление?
  */
 class CurrencyEnum
 {
@@ -44,15 +43,4 @@ class CurrencyEnum
     public const ZAR = 'ZAR';
     public const KRW = 'KRW';
     public const JPY = 'JPY';
-
-    /**
-     * @param string $sellingCurrencyCode
-     * @param string $purchasedCurrencyCode
-     * @return string
-     * TODO: Нужно найти более подходящее место
-     */
-    public static function getCurrencyPairCode(string $sellingCurrencyCode, string $purchasedCurrencyCode): string
-    {
-        return "{$sellingCurrencyCode}-{$purchasedCurrencyCode}";
-    }
 }

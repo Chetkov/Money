@@ -4,6 +4,7 @@ namespace Chetkov\Money\Exchanger\RatesProvider;
 
 use Chetkov\Money\CurrencyEnum;
 use Chetkov\Money\Exception\MoneyException;
+use Chetkov\Money\Helper\CurrencyPairHelper;
 
 /**
  * Class CbrExchangeRatesProvider
@@ -30,7 +31,7 @@ class CbrExchangeRatesProvider implements ExchangeRatesProviderInterface
             $currencyCode = $valuteElement->getElementsByTagName('CharCode')[0]->nodeValue;
             $rate = $valuteElement->getElementsByTagName('Value')[0]->nodeValue;
 
-            $currencyPair = CurrencyEnum::getCurrencyPairCode($currencyCode, CurrencyEnum::RUB);
+            $currencyPair = CurrencyPairHelper::implode($currencyCode, CurrencyEnum::RUB);
             $rate = (float)str_replace(',', '.', $rate);
             $result[$currencyPair] = $rate;
         }

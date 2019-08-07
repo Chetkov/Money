@@ -4,10 +4,10 @@ namespace Chetkov\Money\Exchanger;
 
 use Chetkov\DataStructures\Graph\Graph;
 use Chetkov\DataStructures\Graph\PathFinder\ShortestPathFinder;
-use Chetkov\Money\CurrencyEnum;
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
 use Chetkov\Money\Exchanger\RatesProvider\ExchangeRatesProviderInterface;
+use Chetkov\Money\Helper\CurrencyPairHelper;
 use Chetkov\Money\Money;
 
 /**
@@ -66,8 +66,8 @@ class GraphRatesSearchingExchangerDecorator extends AbstractExchanger
 
         $exchangedAmount = $money->getAmount();
         for ($i = 0; $i < $pathLength - 1; $i++) {
-            $currencyPair = CurrencyEnum::getCurrencyPairCode($exchangePath[$i], $exchangePath[$i+1]);
-            $reversePair = CurrencyEnum::getCurrencyPairCode($exchangePath[$i+1], $exchangePath[$i]);
+            $currencyPair = CurrencyPairHelper::implode($exchangePath[$i], $exchangePath[$i + 1]);
+            $reversePair = CurrencyPairHelper::implode($exchangePath[$i + 1], $exchangePath[$i]);
             switch (true) {
                 case isset($exchangeRates[$currencyPair]):
                     $exchangedAmount *= $exchangeRates[$currencyPair];
