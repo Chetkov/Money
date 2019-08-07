@@ -33,7 +33,6 @@ abstract class AbstractExchanger implements ExchangerInterface
      * @return Money
      * @throws ExchangeRateWasNotFoundException
      * @throws RequiredParameterMissedException
-     * TODO: Учитывать курс покупки/продажи
      */
     public function exchange(Money $money, string $currency, int $roundingPrecision = 2): Money
     {
@@ -52,11 +51,7 @@ abstract class AbstractExchanger implements ExchangerInterface
      * @return float
      * @throws ExchangeRateWasNotFoundException
      */
-    abstract protected function doExchange(
-        Money $money,
-        string $currency,
-        array $exchangeRates
-    ): float;
+    abstract protected function doExchange(Money $money, string $currency, array $exchangeRates): float;
 
     /**
      * @param float $amount
@@ -76,10 +71,10 @@ abstract class AbstractExchanger implements ExchangerInterface
         $reversePair = CurrencyPairHelper::reverse($currencyPair);
         switch (true) {
             case isset($exchangeRates[$currencyPair]):
-                $amount *= $exchangeRates[$currencyPair];
+                $amount *= reset($exchangeRates[$currencyPair]);
                 break;
             case isset($exchangeRates[$reversePair]):
-                $amount /= $exchangeRates[$reversePair];
+                $amount /= end($exchangeRates[$reversePair]);
                 break;
             default:
                 throw new ExchangeRateWasNotFoundException($currencyPair);

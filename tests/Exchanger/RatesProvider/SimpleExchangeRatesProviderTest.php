@@ -33,14 +33,14 @@ class SimpleExchangeRatesProviderTest extends TestCase
         $instanceProperty->setValue(null);
         $instanceProperty->setAccessible(false);
 
-        SimpleExchangeRatesProvider::getInstance(['EUR-TRY' => 6.24]);
+        SimpleExchangeRatesProvider::getInstance(['EUR-TRY' => [6.24]]);
         $this->assertTrue(true);
     }
 
     public function testAddCurrencyPair(): void
     {
         $exchanger = SimpleExchangeRatesProvider::getInstance();
-        $exchanger->addCurrencyPair('USD-RUB', 66.34);
+        $exchanger->addCurrencyPair('USD-RUB', [66.34]);
         $this->assertTrue(true);
     }
 }

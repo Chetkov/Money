@@ -44,7 +44,7 @@ class SimpleExchangerTest extends TestCase
     ): void {
         $exchangeRatesProvider = SimpleExchangeRatesProvider::getInstance();
         [$currencyPair, $exchangeRate] = $exchangeConfig;
-        $exchangeRatesProvider->addCurrencyPair($currencyPair, $exchangeRate);
+        $exchangeRatesProvider->addCurrencyPair($currencyPair, [$exchangeRate]);
 
         $exchanger = new SimpleExchanger($exchangeRatesProvider);
 

@@ -33,7 +33,7 @@ class CbrExchangeRatesProvider implements ExchangeRatesProviderInterface
 
             $currencyPair = CurrencyPairHelper::implode($currencyCode, CurrencyEnum::RUB);
             $rate = (float)str_replace(',', '.', $rate);
-            $result[$currencyPair] = $rate;
+            $result[$currencyPair] = [$rate];
         }
 
         return $result;

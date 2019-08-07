@@ -11,12 +11,12 @@ class SimpleExchangeRatesProvider implements ExchangeRatesProviderInterface
     /** @var SimpleExchangeRatesProvider */
     private static $instance;
 
-    /** @var float[] */
+    /** @var array */
     private $exchangeRates;
 
     /**
      * SimpleExchangeRatesProvider constructor.
-     * @param float[] $exchangeRates Example: ['USD-RUB' => 66.34]
+     * @param array $exchangeRates
      */
     public function __construct(array $exchangeRates = [])
     {
@@ -24,8 +24,11 @@ class SimpleExchangeRatesProvider implements ExchangeRatesProviderInterface
     }
 
     /**
-     * @param float[] $exchangeRates Example: ['USD-RUB' => 66.34]
+     * @param array $exchangeRates Example:
      * @return SimpleExchangeRatesProvider
+     *
+     * @example ['USD-RUB' => [66.34]]
+     * @example ['USD-RUB' => [66.34, 68.12]]
      */
     public static function getInstance(array $exchangeRates = []): self
     {
@@ -33,8 +36,8 @@ class SimpleExchangeRatesProvider implements ExchangeRatesProviderInterface
             self::$instance = new self();
         }
 
-        foreach ($exchangeRates as $currencyPair => $exchangeRate) {
-            self::$instance->addCurrencyPair($currencyPair, $exchangeRate);
+        foreach ($exchangeRates as $currencyPair => $rates) {
+            self::$instance->addCurrencyPair($currencyPair, $rates);
         }
 
         return self::$instance;
@@ -42,12 +45,12 @@ class SimpleExchangeRatesProvider implements ExchangeRatesProviderInterface
 
     /**
      * @param string $currencyPair
-     * @param float $exchangeRate
+     * @param array $exchangeRates [$sellingRate, $purchaseRate]
      * @return SimpleExchangeRatesProvider
      */
-    public function addCurrencyPair(string $currencyPair, float $exchangeRate): self
+    public function addCurrencyPair(string $currencyPair, array $exchangeRates): self
     {
-        $this->exchangeRates[$currencyPair] = $exchangeRate;
+        $this->exchangeRates[$currencyPair] = $exchangeRates;
         return $this;
     }
 

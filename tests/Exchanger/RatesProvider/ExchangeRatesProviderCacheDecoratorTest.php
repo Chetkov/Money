@@ -23,10 +23,10 @@ class ExchangeRatesProviderCacheDecoratorTest extends TestCase
         $yesterdayDateTime = new \DateTimeImmutable('-1 day');
 
         $yesterdayRates = $cachingProviderDecorator->getRates($yesterdayDateTime);
-        $simpleRatesProvider->addCurrencyPair('EUR-RUB', 72.5);
+        $simpleRatesProvider->addCurrencyPair('EUR-RUB', [72.5]);
 
         $todayRates = $cachingProviderDecorator->getRates();
-        $simpleRatesProvider->addCurrencyPair('EUR-USD', 1.2);
+        $simpleRatesProvider->addCurrencyPair('EUR-USD', [1.2]);
 
         $yesterdayRatesFromCache = $cachingProviderDecorator->getRates($yesterdayDateTime);
         $todayRatesFromCache = $cachingProviderDecorator->getRates();
