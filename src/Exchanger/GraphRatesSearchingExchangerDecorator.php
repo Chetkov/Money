@@ -104,12 +104,12 @@ class GraphRatesSearchingExchangerDecorator extends AbstractExchanger
     {
         $graph = new Graph();
         foreach ($exchangeRates as $currencyPair => $rate) {
-            [$fromCurrency, $toCurrency] = CurrencyPairHelper::explode($currencyPair);
+            [$sellingCurrency, $purchasedCurrency] = CurrencyPairHelper::explode($currencyPair);
             $graph
-                ->addNode($fromCurrency)
-                ->addNode($toCurrency)
-                ->addNodesLink($fromCurrency, $toCurrency, $rate, false)
-                ->addNodesLink($toCurrency, $fromCurrency, 1/$rate, false);
+                ->addNode($sellingCurrency)
+                ->addNode($purchasedCurrency)
+                ->addNodesLink($sellingCurrency, $purchasedCurrency, $rate, false)
+                ->addNodesLink($purchasedCurrency, $sellingCurrency, 1/$rate, false);
         }
         return $graph;
     }
