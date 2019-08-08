@@ -14,7 +14,7 @@ class CbrExchangeRatesProviderTest extends TestCase
     /**
      * @throws \Exception
      */
-    public function testLoad(): void
+    public function testGetRates(): void
     {
         $ratesProvider = $this->createPartialMock(CbrExchangeRatesProvider::class, ['executeRequest']);
 

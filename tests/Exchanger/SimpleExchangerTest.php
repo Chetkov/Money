@@ -6,7 +6,6 @@ use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
 use Chetkov\Money\Exchanger\RatesProvider\SimpleExchangeRatesProvider;
 use Chetkov\Money\Exchanger\SimpleExchanger;
-use Chetkov\Money\LibConfig;
 use Chetkov\Money\Money;
 use PHPUnit\Framework\TestCase;
 
@@ -16,15 +15,6 @@ use PHPUnit\Framework\TestCase;
  */
 class SimpleExchangerTest extends TestCase
 {
-    /**
-     * @throws RequiredParameterMissedException
-     */
-    protected function setUp()
-    {
-        $config = require CHETKOV_MONEY_ROOT . '/config/example.config.php';
-        LibConfig::getInstance($config);
-    }
-
     /**
      * @dataProvider exchangeDataProvider
      * @param Money $money
@@ -58,7 +48,6 @@ class SimpleExchangerTest extends TestCase
      */
     public function exchangeDataProvider(): array
     {
-        $this->setUp();
         return [
             'USD to RUB' => [new Money(100, 'USD'), 'RUB', ['USD-RUB', 66.34], [6634, 'RUB']],
             'RUB to USD, precision: 2' => [new Money(100, 'RUB'), 'USD', ['USD-RUB', 66.34], [1.51, 'USD'], 2],

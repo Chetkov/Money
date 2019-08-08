@@ -15,7 +15,7 @@ class ExchangeRatesProviderCacheDecoratorTest extends TestCase
     /**
      * @throws \Exception
      */
-    public function testLoad(): void
+    public function testGetRates(): void
     {
         $simpleRatesProvider = new SimpleExchangeRatesProvider(['USD-RUB' => 66.34]);
         $cachingProviderDecorator = new ExchangeRatesProviderCacheDecorator($simpleRatesProvider, 1);

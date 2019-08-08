@@ -6,7 +6,6 @@ use Chetkov\Money\CurrencyEnum;
 use Chetkov\Money\Exception\ExchangeRateWasNotFoundException;
 use Chetkov\Money\Exception\OperationWithDifferentCurrenciesException;
 use Chetkov\Money\Exception\RequiredParameterMissedException;
-use Chetkov\Money\LibConfig;
 use Chetkov\Money\Money;
 use PHPUnit\Framework\TestCase;
 
@@ -18,15 +17,7 @@ class MoneyTest extends TestCase
 {
     private const RUB = CurrencyEnum::RUB;
     private const USD = CurrencyEnum::USD;
-
-    /**
-     * @throws RequiredParameterMissedException
-     */
-    protected function setUp()
-    {
-        $config = require CHETKOV_MONEY_ROOT . '/config/example.config.php';
-        LibConfig::getInstance($config);
-    }
+    private const EUR = CurrencyEnum::EUR;
 
     public function testGetAmount(): void
     {
@@ -38,6 +29,32 @@ class MoneyTest extends TestCase
     {
         $money = Money::RUB(100);
         $this->assertEquals(self::RUB, $money->getCurrency());
+    }
+
+    /**
+     * @dataProvider exchangeDataProvider
+     * @param Money $money
+     * @param string $currency
+     * @param array $expectedResult
+     * @throws ExchangeRateWasNotFoundException
+     * @throws OperationWithDifferentCurrenciesException
+     */
+    public function testExchange(Money $money, string $currency, array $expectedResult): void
+    {
+        $exchangedMoney = $money->exchange($currency);
+        $this->assertEquals($expectedResult, [$exchangedMoney->getAmount(), $exchangedMoney->getCurrency()]);
+    }
+
+    /**
+     * @return array
+     */
+    public function exchangeDataProvider(): array
+    {
+        return [
+            'USD->RUB' => [Money::USD(100), self::RUB, [6634, self::RUB]],
+            'USD<-RUB' => [Money::RUB(6821), self::USD, [100, self::USD]],
+            'USD->RUB->EUR' => [Money::USD(100), self::EUR, [88.92, self::EUR]],
+        ];
     }
 
     /**
@@ -57,14 +74,12 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws RequiredParameterMissedException
      */
     public function addDataProvider(): array
     {
-        $this->setUp();
         return [
             'float: RUB' => [Money::RUB(15.72), Money::RUB(14.29), [30.01, self::RUB]],
-            'float: USD, RUB' => [Money::USD(100), Money::RUB(100), [101.51, self::USD]],
+            'float: USD, RUB' => [Money::USD(100), Money::RUB(100), [101.47, self::USD]],
             'int: RUB, USD' => [Money::RUB(100), Money::USD(100), [6734, self::RUB]],
         ];
     }
@@ -86,15 +101,13 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
-     * @throws RequiredParameterMissedException
      */
     public function subtractDataProvider(): array
     {
-        $this->setUp();
         return [
             'int' => [Money::RUB(100), Money::RUB(100), [0, self::RUB]],
             'float' => [Money::RUB(15.72), Money::RUB(15.80), [-0.08, self::RUB]],
-            'int: USD, RUB' => [Money::USD(100), Money::RUB(100), [98.49, self::USD]],
+            'int: USD, RUB' => [Money::USD(100), Money::RUB(100), [98.53, self::USD]],
             'int: RUB, USD' => [Money::RUB(100), Money::USD(100), [-6534, self::RUB]],
         ];
     }
@@ -276,19 +289,14 @@ class MoneyTest extends TestCase
 
     /**
      * @return array
+     * @throws RequiredParameterMissedException
      */
     public function negativeCasesDataProvider(): array
     {
-        $config = require CHETKOV_MONEY_ROOT . '/config/example.config.php';
-        $reconfigurePackageConfig = static function (bool $useCurrencyConversation) use ($config) {
-            $config['is_currency_conversation_enabled'] = $useCurrencyConversation;
-            LibConfig::getInstance()->reconfigure($config);
-        };
-
-        $reconfigurePackageConfig(false);
+        LibConfigurator::configureForTests(false);
         $one = Money::RUB(100);
         $two = Money::USD(100);
-        $reconfigurePackageConfig(true);
+        LibConfigurator::configureForTests();
         return [
             'different currencies for method add' => [
                 static function () use ($one, $two) {

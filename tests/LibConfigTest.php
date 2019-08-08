@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 class LibConfigTest extends TestCase
 {
     /** @var LibConfig */
-    private $config;
+    private $libConfig;
 
     /**
      * @throws RequiredParameterMissedException
@@ -28,13 +28,13 @@ class LibConfigTest extends TestCase
         $instanceProperty->setValue(null);
         $instanceProperty->setAccessible(false);
 
-        $config = require CHETKOV_MONEY_ROOT . '/config/example.config.php';
-        $this->config = LibConfig::getInstance($config);
+        LibConfigurator::configureForTests();
+        $this->libConfig = LibConfig::getInstance();
     }
 
     public function testGetInstance(): void
     {
-        $this->assertInstanceOf(LibConfig::class, $this->config);
+        $this->assertInstanceOf(LibConfig::class, $this->libConfig);
     }
 
     /**
@@ -42,7 +42,7 @@ class LibConfigTest extends TestCase
      */
     public function testReconfigure(): void
     {
-        $this->config->reconfigure([
+        $this->libConfig->reconfigure([
             'is_currency_conversation_enabled' => true,
             'exchanger_factory' => static function () {
                 return $this->createMock(ExchangerInterface::class);
@@ -57,17 +57,17 @@ class LibConfigTest extends TestCase
     public function testReconfigureNegative(): void
     {
         $this->expectException(RequiredParameterMissedException::class);
-        $this->config->reconfigure([]);
+        $this->libConfig->reconfigure([]);
     }
 
     public function testGetExchangeStrategy(): void
     {
-        $this->config->getExchanger();
+        $this->libConfig->getExchanger();
         $this->assertTrue(true);
     }
 
     public function testUseExchangeStrategy(): void
     {
-        $this->assertEquals(true, $this->config->isCurrencyConversationEnabled());
+        $this->assertEquals(true, $this->libConfig->isCurrencyConversationEnabled());
     }
 }

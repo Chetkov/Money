@@ -2,9 +2,7 @@
 
 namespace Tests\Chetkov\Money\Exchanger\RatesProvider;
 
-use Chetkov\Money\Exception\RequiredParameterMissedException;
 use Chetkov\Money\Exchanger\RatesProvider\SimpleExchangeRatesProvider;
-use Chetkov\Money\LibConfig;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -13,15 +11,6 @@ use PHPUnit\Framework\TestCase;
  */
 class SimpleExchangeRatesProviderTest extends TestCase
 {
-    /**
-     * @throws RequiredParameterMissedException
-     */
-    protected function setUp()
-    {
-        $config = require CHETKOV_MONEY_ROOT . '/config/example.config.php';
-        LibConfig::getInstance($config);
-    }
-
     /**
      * @throws \ReflectionException
      */
