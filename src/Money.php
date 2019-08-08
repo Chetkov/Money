@@ -45,14 +45,14 @@ use Chetkov\Money\Exchanger\ExchangerInterface;
  */
 class Money implements \JsonSerializable
 {
+    /** @var ExchangerInterface|null */
+    private $exchanger;
+
     /** @var float */
     private $amount;
 
     /** @var string */
     private $currency;
-
-    /** @var ExchangerInterface|null */
-    private $exchanger;
 
     /**
      * Money constructor.
@@ -105,6 +105,17 @@ class Money implements \JsonSerializable
     }
 
     /**
+     * @param string $currency
+     * @return Money
+     * @throws Exception\ExchangeRateWasNotFoundException
+     * @throws Exception\OperationWithDifferentCurrenciesException
+     */
+    public function exchange(string $currency): self
+    {
+        return $this->convertToCurrency($this, $currency);
+    }
+
+    /**
      * @param Money $other
      * @return Money
      * @throws Exception\ExchangeRateWasNotFoundException
@@ -113,7 +124,7 @@ class Money implements \JsonSerializable
      */
     public function add(self $other): self
     {
-        $other = $this->convertToCurrentCurrency($other);
+        $other = $this->convertToCurrency($other);
         return new Money($this->amount + $other->getAmount(), $this->currency);
     }
 
@@ -126,7 +137,7 @@ class Money implements \JsonSerializable
      */
     public function subtract(self $other): self
     {
-        $other = $this->convertToCurrentCurrency($other);
+        $other = $this->convertToCurrency($other);
         return new Money($this->amount - $other->getAmount(), $this->currency);
     }
 
@@ -186,7 +197,7 @@ class Money implements \JsonSerializable
     public function equals(self $other, bool $isCrossCurrencyComparison = false, float $allowableDeviationPercent = 0.0): bool
     {
         if ($isCrossCurrencyComparison) {
-            $other = $this->convertToCurrentCurrency($other);
+            $other = $this->convertToCurrency($other);
             $deviation = abs($this->getAmount() - $other->getAmount());
             $deviationPercentInFact = $deviation / $this->getAmount() * 100;
             return $deviationPercentInFact < $allowableDeviationPercent;
@@ -204,7 +215,7 @@ class Money implements \JsonSerializable
      */
     public function moreThan(self $other): bool
     {
-        $other = $this->convertToCurrentCurrency($other);
+        $other = $this->convertToCurrency($other);
         return $this->amount > $other->getAmount();
     }
 
@@ -216,7 +227,7 @@ class Money implements \JsonSerializable
      */
     public function lessThan(self $other): bool
     {
-        $other = $this->convertToCurrentCurrency($other);
+        $other = $this->convertToCurrency($other);
         return $this->amount < $other->getAmount();
     }
 
@@ -252,13 +263,15 @@ class Money implements \JsonSerializable
 
     /**
      * @param Money $other
+     * @param string|null $currency
      * @return Money
      * @throws Exception\ExchangeRateWasNotFoundException
      * @throws Exception\OperationWithDifferentCurrenciesException
      */
-    private function convertToCurrentCurrency(Money $other): self
+    private function convertToCurrency(Money $other, ?string $currency = null): self
     {
-        if ($this->currency === $other->getCurrency()) {
+        $currency = $currency ?? $this->currency;
+        if ($currency === $other->getCurrency()) {
             return $other;
         }
 
@@ -266,6 +279,6 @@ class Money implements \JsonSerializable
             throw new Exception\OperationWithDifferentCurrenciesException();
         }
 
-        return $this->exchanger->exchange($other, $this->getCurrency());
+        return $this->exchanger->exchange($other, $currency);
     }
 }
