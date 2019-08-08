@@ -5,8 +5,8 @@ use Chetkov\Money\Exchanger\RatesProvider\SimpleExchangeRatesProvider;
 use Chetkov\Money\Exchanger\SimpleExchanger;
 
 $exchangeRates = [
-    'USD-RUB' => [66.34],
-    'EUR-RUB' => [72.42],
+    'USD-RUB' => [66.34, 68.21],
+    'EUR-RUB' => [72.42, 74.61],
     'JPY-RUB' => [0.61],
 ];
 
