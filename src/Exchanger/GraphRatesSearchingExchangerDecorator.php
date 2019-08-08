@@ -60,8 +60,7 @@ class GraphRatesSearchingExchangerDecorator extends AbstractExchanger
         $pathLength = count($exchangePath);
 
         if ($pathLength < 2) {
-            $currencyPair = $money->getCurrency() . '-' . $currency;
-            throw new ExchangeRateWasNotFoundException($currencyPair);
+            return $money->getAmount();
         }
 
         $exchangedAmount = $money->getAmount();

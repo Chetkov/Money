@@ -54,6 +54,7 @@ class MoneyTest extends TestCase
             'USD->RUB' => [Money::USD(100), self::RUB, [6634, self::RUB]],
             'USD<-RUB' => [Money::RUB(6821), self::USD, [100, self::USD]],
             'USD->RUB->EUR' => [Money::USD(100), self::EUR, [88.92, self::EUR]],
+            'USD->USD' => [Money::USD(100), self::USD, [100, self::USD]],
         ];
     }
 
