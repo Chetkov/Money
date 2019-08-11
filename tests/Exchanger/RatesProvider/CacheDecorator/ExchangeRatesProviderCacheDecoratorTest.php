@@ -1,10 +1,12 @@
 <?php
 
-namespace Tests\Chetkov\Money\Exchanger\RatesProvider;
+namespace Tests\Chetkov\Money\Exchanger\RatesProvider\CacheDecorator;
 
-use Chetkov\Money\Exchanger\RatesProvider\ExchangeRatesProviderCacheDecorator;
+use Chetkov\Money\Exchanger\RatesProvider\CacheDecorator\ExchangeRatesProviderCacheDecorator;
+use Chetkov\Money\Exchanger\RatesProvider\CacheDecorator\Strategy\ClassPropertyCacheStrategy;
 use Chetkov\Money\Exchanger\RatesProvider\SimpleExchangeRatesProvider;
 use PHPUnit\Framework\TestCase;
+use Psr\SimpleCache\InvalidArgumentException;
 
 /**
  * Class ExchangeRatesProviderCacheDecoratorTest
@@ -14,11 +16,13 @@ class ExchangeRatesProviderCacheDecoratorTest extends TestCase
 {
     /**
      * @throws \Exception
+     * @throws InvalidArgumentException
      */
     public function testGetRates(): void
     {
         $simpleRatesProvider = new SimpleExchangeRatesProvider(['USD-RUB' => 66.34]);
-        $cachingProviderDecorator = new ExchangeRatesProviderCacheDecorator($simpleRatesProvider, 1);
+        $cacheStrategy = new ClassPropertyCacheStrategy();
+        $cachingProviderDecorator = new ExchangeRatesProviderCacheDecorator($simpleRatesProvider, $cacheStrategy);
 
         $yesterdayDateTime = new \DateTimeImmutable('-1 day');
 

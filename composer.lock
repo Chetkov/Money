@@ -4,21 +4,69 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "42c30ac4d67b0a12fb3409fab2cdffdf",
-    "content-hash": "d65600784daa7dac8d4f407d6d3a4a19",
+    "hash": "6e4eeb6cd3d394dda464560b97be2168",
+    "content-hash": "2d3eb003d8b0823d200307a418fe6815",
     "packages": [
+        {
+            "name": "psr/simple-cache",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/simple-cache.git",
+                "reference": "408d5eafb83c57f6365a3ca330ff23aa4a5fa39b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/simple-cache/zipball/408d5eafb83c57f6365a3ca330ff23aa4a5fa39b",
+                "reference": "408d5eafb83c57f6365a3ca330ff23aa4a5fa39b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\SimpleCache\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interfaces for simple caching",
+            "keywords": [
+                "cache",
+                "caching",
+                "psr",
+                "psr-16",
+                "simple-cache"
+            ],
+            "time": "2017-10-23 01:57:42"
+        },
         {
             "name": "v.chetkov/data-structures",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Chetkov/DataStructures.git",
-                "reference": "9cbd46fd318361f328fcb2870ae3f7aef2a1cac8"
+                "reference": "3cd5a5910a4054f262ff3dc21ae8c399f354b11a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Chetkov/DataStructures/zipball/9cbd46fd318361f328fcb2870ae3f7aef2a1cac8",
-                "reference": "9cbd46fd318361f328fcb2870ae3f7aef2a1cac8",
+                "url": "https://api.github.com/repos/Chetkov/DataStructures/zipball/3cd5a5910a4054f262ff3dc21ae8c399f354b11a",
+                "reference": "3cd5a5910a4054f262ff3dc21ae8c399f354b11a",
                 "shasum": ""
             },
             "require-dev": {
@@ -41,7 +89,7 @@
                     "email": "chetkov.valeriy@gmail.com"
                 }
             ],
-            "time": "2019-05-12 08:05:32"
+            "time": "2019-08-06 23:58:47"
         }
     ],
     "packages-dev": [
@@ -323,12 +371,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/di.git",
-                "reference": "4802380f87c7cd36aa89aa07e64dec6876c3f23d"
+                "reference": "570020312863db90d2f63d48093ce85ce8a316f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/di/zipball/4802380f87c7cd36aa89aa07e64dec6876c3f23d",
-                "reference": "4802380f87c7cd36aa89aa07e64dec6876c3f23d",
+                "url": "https://api.github.com/repos/nette/di/zipball/570020312863db90d2f63d48093ce85ce8a316f0",
+                "reference": "570020312863db90d2f63d48093ce85ce8a316f0",
                 "shasum": ""
             },
             "require": {
@@ -388,7 +436,7 @@
                 "nette",
                 "static"
             ],
-            "time": "2019-08-06 00:44:42"
+            "time": "2019-08-07 12:11:33"
         },
         {
             "name": "nette/finder",
@@ -694,12 +742,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/utils.git",
-                "reference": "7727c90f006256a66836e2dd1da93652cc7676a5"
+                "reference": "74c206bd6310bf0f9f8bd27064228cc0528d5334"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/utils/zipball/7727c90f006256a66836e2dd1da93652cc7676a5",
-                "reference": "7727c90f006256a66836e2dd1da93652cc7676a5",
+                "url": "https://api.github.com/repos/nette/utils/zipball/74c206bd6310bf0f9f8bd27064228cc0528d5334",
+                "reference": "74c206bd6310bf0f9f8bd27064228cc0528d5334",
                 "shasum": ""
             },
             "require": {
@@ -762,7 +810,7 @@
                 "utility",
                 "validation"
             ],
-            "time": "2019-08-06 00:20:34"
+            "time": "2019-08-07 12:21:21"
         },
         {
             "name": "nikic/php-parser",
@@ -2308,12 +2356,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "c3f7eed723f4b7b6faaf451373a54cf7f58103d5"
+                "reference": "204dcd60bc422b4df0802689070ada6ca82a9dc0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/c3f7eed723f4b7b6faaf451373a54cf7f58103d5",
-                "reference": "c3f7eed723f4b7b6faaf451373a54cf7f58103d5",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/204dcd60bc422b4df0802689070ada6ca82a9dc0",
+                "reference": "204dcd60bc422b4df0802689070ada6ca82a9dc0",
                 "shasum": ""
             },
             "require": {
@@ -2351,7 +2399,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2019-08-05 06:47:46"
+            "time": "2019-08-08 05:29:37"
         },
         {
             "name": "symfony/console",
@@ -2359,12 +2407,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "c6d17991875553ae4aa35cd34837e80c0dd55ec2"
+                "reference": "d96646ee66718f47905c50afceaa514bc4e9cc67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/c6d17991875553ae4aa35cd34837e80c0dd55ec2",
-                "reference": "c6d17991875553ae4aa35cd34837e80c0dd55ec2",
+                "url": "https://api.github.com/repos/symfony/console/zipball/d96646ee66718f47905c50afceaa514bc4e9cc67",
+                "reference": "d96646ee66718f47905c50afceaa514bc4e9cc67",
                 "shasum": ""
             },
             "require": {
@@ -2376,6 +2424,7 @@
             "conflict": {
                 "symfony/dependency-injection": "<3.4",
                 "symfony/event-dispatcher": "<4.3|>=5",
+                "symfony/lock": "<4.4",
                 "symfony/process": "<3.3"
             },
             "provide": {
@@ -2426,7 +2475,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2019-08-06 15:45:20"
+            "time": "2019-08-08 15:14:45"
         },
         {
             "name": "symfony/finder",
@@ -2434,12 +2483,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "e535ef9c48e756c1bae9813a09016445bdd3bc6f"
+                "reference": "24c7afac8b1cb0e37953be3d6d1dcd0adb076093"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/e535ef9c48e756c1bae9813a09016445bdd3bc6f",
-                "reference": "e535ef9c48e756c1bae9813a09016445bdd3bc6f",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/24c7afac8b1cb0e37953be3d6d1dcd0adb076093",
+                "reference": "24c7afac8b1cb0e37953be3d6d1dcd0adb076093",
                 "shasum": ""
             },
             "require": {
@@ -2475,7 +2524,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2019-08-05 14:07:36"
+            "time": "2019-08-08 12:07:40"
         },
         {
             "name": "symfony/polyfill-ctype",
